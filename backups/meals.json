@@ -1,0 +1,1040 @@
+[
+  {
+    "id": "0164ab72-95f7-45d5-8c0c-33588b2f4939",
+    "title": "Rice Stir Fry",
+    "category_id": "8a0fd6ab-ee90-40ac-9337-32049aa04d06",
+    "prep_time": 15,
+    "cook_time": 20,
+    "protein_g": "43",
+    "carbs_g": "55",
+    "fats_g": "10",
+    "ingredients": [
+      {
+        "name": "Rice",
+        "amount": ""
+      },
+      {
+        "name": "Soy Sauce",
+        "amount": ""
+      },
+      {
+        "name": "Eggs",
+        "amount": ""
+      },
+      {
+        "name": "Mixed Vegetables",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "046a05f7-fabc-44c3-9491-7b5e18a19e38",
+    "title": "Pad Thai",
+    "category_id": "8a0fd6ab-ee90-40ac-9337-32049aa04d06",
+    "prep_time": 20,
+    "cook_time": 14,
+    "protein_g": "35",
+    "carbs_g": "55",
+    "fats_g": "30",
+    "ingredients": [
+      {
+        "name": "Pad Noodles",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T05:51:18.641Z"
+  },
+  {
+    "id": "086901a7-9cc1-4a70-b729-76e8ab3aac5a",
+    "title": "Sweet Potato Bowl",
+    "category_id": "37fdde37-5346-4507-844e-9f9b404fea72",
+    "prep_time": 20,
+    "cook_time": 15,
+    "protein_g": "18",
+    "carbs_g": "52",
+    "fats_g": "22",
+    "ingredients": [
+      {
+        "name": "Sweet Potato",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T05:56:26.268Z"
+  },
+  {
+    "id": "0e38fcf9-8e13-4e13-89be-2d0034d12463",
+    "title": "Bibimbap",
+    "category_id": "8a0fd6ab-ee90-40ac-9337-32049aa04d06",
+    "prep_time": 20,
+    "cook_time": 20,
+    "protein_g": "34",
+    "carbs_g": "65",
+    "fats_g": "18",
+    "ingredients": [
+      {
+        "name": "Rice",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T05:52:38.686Z"
+  },
+  {
+    "id": "0f2754ae-4ed7-422a-bdb6-126f4efb0648",
+    "title": "Hummas Veggie Wrap",
+    "category_id": "37fdde37-5346-4507-844e-9f9b404fea72",
+    "prep_time": 15,
+    "cook_time": 10,
+    "protein_g": "25",
+    "carbs_g": "68",
+    "fats_g": "21",
+    "ingredients": [
+      {
+        "name": "Tortilla Wrap",
+        "amount": ""
+      },
+      {
+        "name": "Hummas",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "142f9514-e820-42ab-b2e0-9989ec601dd3",
+    "title": "Eggs & Sausage",
+    "category_id": "ea5aab59-3882-41be-967a-2e82d556f704",
+    "prep_time": 15,
+    "cook_time": 30,
+    "protein_g": "41",
+    "carbs_g": "67",
+    "fats_g": "23",
+    "ingredients": [
+      {
+        "name": "Eggs",
+        "amount": ""
+      },
+      {
+        "name": "Veggie Sausage",
+        "amount": ""
+      },
+      {
+        "name": "Bell Peppers",
+        "amount": ""
+      },
+      {
+        "name": "Onion",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "169854a7-8dc0-4159-a373-afa2710c109c",
+    "title": "Chili & Potatoes",
+    "category_id": "ecdbee13-f404-4da2-ac2b-365a041da2ae",
+    "prep_time": 20,
+    "cook_time": 30,
+    "protein_g": "12",
+    "carbs_g": "35",
+    "fats_g": "11",
+    "ingredients": [],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "22974889-f5a2-4ab0-bc6c-b30b1e34ac7d",
+    "title": "Ramen",
+    "category_id": "8a0fd6ab-ee90-40ac-9337-32049aa04d06",
+    "prep_time": 25,
+    "cook_time": 40,
+    "protein_g": "32",
+    "carbs_g": "45",
+    "fats_g": "7",
+    "ingredients": [
+      {
+        "name": "Ramen Noodles",
+        "amount": ""
+      },
+      {
+        "name": "Chicken Broth",
+        "amount": ""
+      },
+      {
+        "name": "Soft-Boiled Egg",
+        "amount": ""
+      },
+      {
+        "name": "Green Onions",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "28c3c292-a057-4032-95a4-a93729651acc",
+    "title": "Pizza",
+    "category_id": "7b104dfa-2496-4b76-8b0b-47208a12fd79",
+    "prep_time": 30,
+    "cook_time": 20,
+    "protein_g": "25",
+    "carbs_g": "50",
+    "fats_g": "20",
+    "ingredients": [
+      {
+        "name": "Sauce",
+        "amount": ""
+      },
+      {
+        "name": "Pizza Dough",
+        "amount": ""
+      },
+      {
+        "name": "Mozzarella Cheese",
+        "amount": ""
+      },
+      {
+        "name": "Bell Peppers",
+        "amount": ""
+      },
+      {
+        "name": "Mushrooms",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:50.655Z"
+  },
+  {
+    "id": "2a0e9887-4288-4430-8cc6-9167c4f26a7b",
+    "title": "Burritos",
+    "category_id": "e15d0855-e263-4fe2-81b8-d5c04653b5e2",
+    "prep_time": 10,
+    "cook_time": 10,
+    "protein_g": "32",
+    "carbs_g": "48",
+    "fats_g": "10",
+    "ingredients": [
+      {
+        "name": "Tortilla",
+        "amount": ""
+      },
+      {
+        "name": "Rice",
+        "amount": ""
+      },
+      {
+        "name": "Beans",
+        "amount": ""
+      },
+      {
+        "name": "Cheese",
+        "amount": ""
+      },
+      {
+        "name": "Tofu",
+        "amount": ""
+      },
+      {
+        "name": "Beyond Beef",
+        "amount": ""
+      },
+      {
+        "name": "Avocado",
+        "amount": ""
+      },
+      {
+        "name": "Mushrooms",
+        "amount": ""
+      },
+      {
+        "name": "Bell Peppers",
+        "amount": ""
+      },
+      {
+        "name": "Yogurt",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "2b1a3b05-2c5d-4c15-a772-ab130e90cb1c",
+    "title": "Tofu Scramble",
+    "category_id": "ea5aab59-3882-41be-967a-2e82d556f704",
+    "prep_time": 14,
+    "cook_time": 14,
+    "protein_g": "28",
+    "carbs_g": "43",
+    "fats_g": "23",
+    "ingredients": [
+      {
+        "name": "Tofu",
+        "amount": ""
+      },
+      {
+        "name": "Eggs",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T05:55:01.664Z"
+  },
+  {
+    "id": "2be7cf22-12e1-4404-8b9c-71445577df37",
+    "title": "Sandwiches",
+    "category_id": "ecdbee13-f404-4da2-ac2b-365a041da2ae",
+    "prep_time": 20,
+    "cook_time": 35,
+    "protein_g": "34",
+    "carbs_g": "23",
+    "fats_g": "5",
+    "ingredients": [
+      {
+        "name": "Bread",
+        "amount": ""
+      },
+      {
+        "name": "Cheese",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "2ee3f539-e298-4367-8c9a-ea04fe2ccd59",
+    "title": "Fettuccine Alfredo",
+    "category_id": "f24924aa-ca7b-4a05-884e-18b3c6e86297",
+    "prep_time": 5,
+    "cook_time": 15,
+    "protein_g": "43",
+    "carbs_g": "44",
+    "fats_g": "10",
+    "ingredients": [
+      {
+        "name": "Fettuccine Pasta",
+        "amount": ""
+      },
+      {
+        "name": "Parmesan Cheese",
+        "amount": ""
+      },
+      {
+        "name": "Butter",
+        "amount": ""
+      },
+      {
+        "name": "Heavy Cream",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T19:19:26.081Z"
+  },
+  {
+    "id": "3596d45f-8b78-46cf-9c5d-e0c8d4fa9480",
+    "title": "Lentils & Rice",
+    "category_id": "8a0fd6ab-ee90-40ac-9337-32049aa04d06",
+    "prep_time": 5,
+    "cook_time": 10,
+    "protein_g": "28",
+    "carbs_g": "68",
+    "fats_g": "24",
+    "ingredients": [
+      {
+        "name": "Lentils",
+        "amount": ""
+      },
+      {
+        "name": "Rice",
+        "amount": ""
+      },
+      {
+        "name": "Naan Bread",
+        "amount": ""
+      },
+      {
+        "name": "Onion",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "3c40b76f-5a90-41d4-9744-c69d3329e208",
+    "title": "Noodle Stir Fry",
+    "category_id": "7b104dfa-2496-4b76-8b0b-47208a12fd79",
+    "prep_time": 15,
+    "cook_time": 15,
+    "protein_g": "34",
+    "carbs_g": "60",
+    "fats_g": "25",
+    "ingredients": [
+      {
+        "name": "Noodles",
+        "amount": "56g"
+      },
+      {
+        "name": "Tofu",
+        "amount": "4oz"
+      },
+      {
+        "name": "Veggies",
+        "amount": "1 cup"
+      },
+      {
+        "name": "Soy Sauce",
+        "amount": "2 Tbsp"
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "4b02e276-be72-4bc5-990a-63e8aaa9208a",
+    "title": "Curry w/ Naan",
+    "category_id": "8a0fd6ab-ee90-40ac-9337-32049aa04d06",
+    "prep_time": 10,
+    "cook_time": 20,
+    "protein_g": "45",
+    "carbs_g": "63",
+    "fats_g": "13",
+    "ingredients": [
+      {
+        "name": "Curry Powder",
+        "amount": ""
+      },
+      {
+        "name": "Coconut Milk",
+        "amount": ""
+      },
+      {
+        "name": "Chickpeas",
+        "amount": ""
+      },
+      {
+        "name": "Naan Bread",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "5b0e723d-1c9b-4b3e-a1c5-efe8139a06bc",
+    "title": "Waffles",
+    "category_id": "ea5aab59-3882-41be-967a-2e82d556f704",
+    "prep_time": 5,
+    "cook_time": 10,
+    "protein_g": "12",
+    "carbs_g": "44",
+    "fats_g": "23",
+    "ingredients": [
+      {
+        "name": "Waffle Mix",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-18T20:55:57.799Z"
+  },
+  {
+    "id": "75780814-5d11-4fbe-ad59-62f8afc714b9",
+    "title": "Spaghetti",
+    "category_id": "f24924aa-ca7b-4a05-884e-18b3c6e86297",
+    "prep_time": 5,
+    "cook_time": 15,
+    "protein_g": "15",
+    "carbs_g": "35",
+    "fats_g": "18",
+    "ingredients": [
+      {
+        "name": "Pasta",
+        "amount": ""
+      },
+      {
+        "name": "Marinara Sauce",
+        "amount": ""
+      },
+      {
+        "name": "Garlic",
+        "amount": ""
+      },
+      {
+        "name": "Basil",
+        "amount": ""
+      },
+      {
+        "name": "Onion",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T19:19:26.081Z"
+  },
+  {
+    "id": "7cd6f58f-33be-447c-92bc-03a63bcddfd9",
+    "title": "Quesadillas",
+    "category_id": "e15d0855-e263-4fe2-81b8-d5c04653b5e2",
+    "prep_time": 10,
+    "cook_time": 10,
+    "protein_g": "16",
+    "carbs_g": "32",
+    "fats_g": "14",
+    "ingredients": [
+      {
+        "name": "Flour Tortillas",
+        "amount": ""
+      },
+      {
+        "name": "Cheddar Cheese",
+        "amount": ""
+      },
+      {
+        "name": "Bell Peppers",
+        "amount": ""
+      },
+      {
+        "name": "Onion",
+        "amount": ""
+      },
+      {
+        "name": "Black Beans",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-12T04:28:08.949Z"
+  },
+  {
+    "id": "81ab7703-7342-4831-ad77-e68cd6cfb54c",
+    "title": "Stuffed Sweet Potatoes",
+    "category_id": "37fdde37-5346-4507-844e-9f9b404fea72",
+    "prep_time": 18,
+    "cook_time": 20,
+    "protein_g": "26",
+    "carbs_g": "55",
+    "fats_g": "32",
+    "ingredients": [
+      {
+        "name": "Sweet Potato",
+        "amount": ""
+      },
+      {
+        "name": "Beans",
+        "amount": ""
+      },
+      {
+        "name": "Greek Yogurt",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T05:57:59.794Z"
+  },
+  {
+    "id": "85500ae0-1ab7-4d23-ae45-12da20933649",
+    "title": "Macaroni & Cheese",
+    "category_id": "ecdbee13-f404-4da2-ac2b-365a041da2ae",
+    "prep_time": 20,
+    "cook_time": 0,
+    "protein_g": "20",
+    "carbs_g": "68",
+    "fats_g": "13",
+    "ingredients": [
+      {
+        "name": "Macaroni Pasta",
+        "amount": ""
+      },
+      {
+        "name": "Cheddar Cheese",
+        "amount": ""
+      },
+      {
+        "name": "Milk",
+        "amount": ""
+      },
+      {
+        "name": "Butter",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "8d696033-214b-4015-ba0f-ca4ef2ec061a",
+    "title": "Burgers",
+    "category_id": "ecdbee13-f404-4da2-ac2b-365a041da2ae",
+    "prep_time": 15,
+    "cook_time": 15,
+    "protein_g": "31",
+    "carbs_g": "22",
+    "fats_g": "17",
+    "ingredients": [
+      {
+        "name": "Beyond Meat",
+        "amount": ""
+      },
+      {
+        "name": "Burger Bun",
+        "amount": ""
+      },
+      {
+        "name": "Lettuce",
+        "amount": ""
+      },
+      {
+        "name": "Tomato",
+        "amount": ""
+      },
+      {
+        "name": "Cheese",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "8eafe898-6ca3-456e-b2d8-de42db0f907a",
+    "title": "Pancakes",
+    "category_id": "ea5aab59-3882-41be-967a-2e82d556f704",
+    "prep_time": 20,
+    "cook_time": 30,
+    "protein_g": "29",
+    "carbs_g": "56",
+    "fats_g": "22",
+    "ingredients": [
+      {
+        "name": "Pancake Mix",
+        "amount": ""
+      },
+      {
+        "name": "Eggs",
+        "amount": ""
+      },
+      {
+        "name": "Milk",
+        "amount": ""
+      },
+      {
+        "name": "Mixed Berries",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "9c8eebfb-f654-4ffa-b2d6-879756ec278e",
+    "title": "Lasagna",
+    "category_id": "f24924aa-ca7b-4a05-884e-18b3c6e86297",
+    "prep_time": 30,
+    "cook_time": 20,
+    "protein_g": "16",
+    "carbs_g": "66",
+    "fats_g": "24",
+    "ingredients": [
+      {
+        "name": "Lasagna Noodles",
+        "amount": ""
+      },
+      {
+        "name": "Cheese",
+        "amount": ""
+      },
+      {
+        "name": "Sauce",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T05:48:41.421Z"
+  },
+  {
+    "id": "9f87ef36-b5eb-4431-9877-f85470198437",
+    "title": "Mapo Tofu",
+    "category_id": "8a0fd6ab-ee90-40ac-9337-32049aa04d06",
+    "prep_time": 20,
+    "cook_time": 20,
+    "protein_g": "22",
+    "carbs_g": "49",
+    "fats_g": "26",
+    "ingredients": [
+      {
+        "name": "Tofu",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T05:51:51.901Z"
+  },
+  {
+    "id": "a2f00610-fce9-402d-bedb-954a2dcd0424",
+    "title": "French Toast",
+    "category_id": "ea5aab59-3882-41be-967a-2e82d556f704",
+    "prep_time": 8,
+    "cook_time": 12,
+    "protein_g": "16",
+    "carbs_g": "50",
+    "fats_g": "22",
+    "ingredients": [
+      {
+        "name": "Bread",
+        "amount": ""
+      },
+      {
+        "name": "Eggs",
+        "amount": ""
+      },
+      {
+        "name": "Syrup",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-18T20:56:36.452Z"
+  },
+  {
+    "id": "a600726d-09d6-4f07-b49f-37a38afaa4db",
+    "title": "Ricotta Stuffed Shells",
+    "category_id": "f24924aa-ca7b-4a05-884e-18b3c6e86297",
+    "prep_time": 30,
+    "cook_time": 25,
+    "protein_g": "35",
+    "carbs_g": "68",
+    "fats_g": "30",
+    "ingredients": [
+      {
+        "name": "Ricotta",
+        "amount": ""
+      },
+      {
+        "name": "Shell Pasta",
+        "amount": ""
+      },
+      {
+        "name": "Spinach",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T07:29:29.380Z"
+  },
+  {
+    "id": "b354b6b0-9da0-4362-94a9-c0437b3610c4",
+    "title": "Stuffed Peppers",
+    "category_id": "7b104dfa-2496-4b76-8b0b-47208a12fd79",
+    "prep_time": 25,
+    "cook_time": 0,
+    "protein_g": "44",
+    "carbs_g": "68",
+    "fats_g": "8",
+    "ingredients": [
+      {
+        "name": "Bell Peppers",
+        "amount": ""
+      },
+      {
+        "name": "Quinoa",
+        "amount": ""
+      },
+      {
+        "name": "Black Beans",
+        "amount": ""
+      },
+      {
+        "name": "Diced Tomatoes",
+        "amount": ""
+      },
+      {
+        "name": "Corn",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "b49f6248-a41a-454d-b20d-f3662f8310d9",
+    "title": "Grilled Cheese",
+    "category_id": "ecdbee13-f404-4da2-ac2b-365a041da2ae",
+    "prep_time": 5,
+    "cook_time": 10,
+    "protein_g": "37",
+    "carbs_g": "67",
+    "fats_g": "14",
+    "ingredients": [
+      {
+        "name": "Bread",
+        "amount": ""
+      },
+      {
+        "name": "Cheddar Cheese",
+        "amount": ""
+      },
+      {
+        "name": "Butter",
+        "amount": ""
+      },
+      {
+        "name": "Tomato Soup",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "bde9e799-c2f9-4fe3-aabd-f0e99ba482d1",
+    "title": "Tacos",
+    "category_id": "e15d0855-e263-4fe2-81b8-d5c04653b5e2",
+    "prep_time": 10,
+    "cook_time": 10,
+    "protein_g": "41",
+    "carbs_g": "45",
+    "fats_g": "6",
+    "ingredients": [
+      {
+        "name": "Tortillas",
+        "amount": ""
+      },
+      {
+        "name": "Beyond Beef",
+        "amount": ""
+      },
+      {
+        "name": "Cheese",
+        "amount": ""
+      },
+      {
+        "name": "Lettuce",
+        "amount": ""
+      },
+      {
+        "name": "Salsa",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "c48caf31-b8ef-4f25-801d-6a6f401dcdda",
+    "title": "Rice Bowl",
+    "category_id": "37fdde37-5346-4507-844e-9f9b404fea72",
+    "prep_time": 12,
+    "cook_time": 16,
+    "protein_g": "25",
+    "carbs_g": "50",
+    "fats_g": "9",
+    "ingredients": [
+      {
+        "name": "Rice",
+        "amount": ""
+      },
+      {
+        "name": "Veggies",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T05:57:06.100Z"
+  },
+  {
+    "id": "c4e867da-e1d2-4d48-9baf-025c2eb854d5",
+    "title": "Pesto Pasta",
+    "category_id": "f24924aa-ca7b-4a05-884e-18b3c6e86297",
+    "prep_time": 5,
+    "cook_time": 15,
+    "protein_g": "37",
+    "carbs_g": "34",
+    "fats_g": "17",
+    "ingredients": [
+      {
+        "name": "Pasta",
+        "amount": ""
+      },
+      {
+        "name": "Basil Pesto",
+        "amount": ""
+      },
+      {
+        "name": "Parmesan Cheese",
+        "amount": ""
+      },
+      {
+        "name": "Pine Nuts",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "c7460bf1-0b20-4e03-b484-176c20ccccb8",
+    "title": "Quinoa Salad Bowl",
+    "category_id": "7b104dfa-2496-4b76-8b0b-47208a12fd79",
+    "prep_time": 8,
+    "cook_time": 20,
+    "protein_g": "22",
+    "carbs_g": "43",
+    "fats_g": "26",
+    "ingredients": [
+      {
+        "name": "Quinoa",
+        "amount": ""
+      },
+      {
+        "name": "Greens",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T07:26:58.729Z"
+  },
+  {
+    "id": "d8f1adb3-0434-40ee-b3c1-fd2860afea6d",
+    "title": "Fried Rice",
+    "category_id": "8a0fd6ab-ee90-40ac-9337-32049aa04d06",
+    "prep_time": 20,
+    "cook_time": 5,
+    "protein_g": "22",
+    "carbs_g": "30",
+    "fats_g": "23",
+    "ingredients": [
+      {
+        "name": "Rice",
+        "amount": ""
+      },
+      {
+        "name": "Eggs",
+        "amount": ""
+      },
+      {
+        "name": "Soy Sauce",
+        "amount": ""
+      },
+      {
+        "name": "Peas & Carrots",
+        "amount": ""
+      },
+      {
+        "name": "Green Onions",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "e150d70a-25b4-4ba4-bef1-ea2a5b48a115",
+    "title": "Avocado Toast",
+    "category_id": "ea5aab59-3882-41be-967a-2e82d556f704",
+    "prep_time": 5,
+    "cook_time": 5,
+    "protein_g": "12",
+    "carbs_g": "32",
+    "fats_g": "24",
+    "ingredients": [
+      {
+        "name": "Avocado",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T06:31:18.027Z"
+  },
+  {
+    "id": "e5820f1b-2369-4ee6-b13f-0c9ae876f9b0",
+    "title": "Potatoes & Veggies",
+    "category_id": "ecdbee13-f404-4da2-ac2b-365a041da2ae",
+    "prep_time": 5,
+    "cook_time": 10,
+    "protein_g": "28",
+    "carbs_g": "65",
+    "fats_g": "24",
+    "ingredients": [
+      {
+        "name": "Potatoes",
+        "amount": ""
+      },
+      {
+        "name": "Broccoli",
+        "amount": ""
+      },
+      {
+        "name": "Carrots",
+        "amount": ""
+      },
+      {
+        "name": "Olive Oil",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-10T18:58:24.149Z"
+  },
+  {
+    "id": "f2bb4b8d-6e98-4be1-92bb-b34026e8c1da",
+    "title": "Jackfruit Tacos",
+    "category_id": "e15d0855-e263-4fe2-81b8-d5c04653b5e2",
+    "prep_time": 15,
+    "cook_time": 20,
+    "protein_g": "8",
+    "carbs_g": "52",
+    "fats_g": "14",
+    "ingredients": [
+      {
+        "name": "Corn Tortillas",
+        "amount": ""
+      },
+      {
+        "name": "Jackfruit",
+        "amount": ""
+      },
+      {
+        "name": "Onion",
+        "amount": ""
+      },
+      {
+        "name": "Chipotle Peppers",
+        "amount": ""
+      },
+      {
+        "name": "Cilantro",
+        "amount": ""
+      },
+      {
+        "name": "Lime",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-12T04:28:09.305Z"
+  },
+  {
+    "id": "fa1e6243-f9f6-4b5a-9380-b120df7d26ab",
+    "title": "Udon Noodles",
+    "category_id": "8a0fd6ab-ee90-40ac-9337-32049aa04d06",
+    "prep_time": 15,
+    "cook_time": 15,
+    "protein_g": "36",
+    "carbs_g": "59",
+    "fats_g": "23",
+    "ingredients": [
+      {
+        "name": "Udon Noodles",
+        "amount": ""
+      },
+      {
+        "name": "Garlic",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T06:46:57.021Z"
+  },
+  {
+    "id": "fd7eeb78-4703-4554-a9ad-99e73daf97a3",
+    "title": "Teriyaki Tofu Bowl",
+    "category_id": "8a0fd6ab-ee90-40ac-9337-32049aa04d06",
+    "prep_time": 16,
+    "cook_time": 16,
+    "protein_g": "39",
+    "carbs_g": "64",
+    "fats_g": "34",
+    "ingredients": [
+      {
+        "name": "Tofu",
+        "amount": ""
+      },
+      {
+        "name": "Rice",
+        "amount": ""
+      },
+      {
+        "name": "Veggies",
+        "amount": ""
+      },
+      {
+        "name": "Teriyaki Sauce",
+        "amount": ""
+      }
+    ],
+    "created_at": "2026-07-19T07:31:03.915Z"
+  }
+]

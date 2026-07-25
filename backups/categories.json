@@ -1,0 +1,42 @@
+[
+  {
+    "id": "37fdde37-5346-4507-844e-9f9b404fea72",
+    "name": "Healthy",
+    "created_at": "2026-07-10T19:11:11.488Z"
+  },
+  {
+    "id": "756cbb06-8ac4-4819-aa6a-e2bc040cbe1a",
+    "name": "Unassigned",
+    "created_at": "2026-07-10T18:25:03.296Z"
+  },
+  {
+    "id": "7b104dfa-2496-4b76-8b0b-47208a12fd79",
+    "name": "Vegetarian",
+    "created_at": "2026-07-10T18:39:19.111Z"
+  },
+  {
+    "id": "8a0fd6ab-ee90-40ac-9337-32049aa04d06",
+    "name": "Asian",
+    "created_at": "2026-07-10T19:11:11.488Z"
+  },
+  {
+    "id": "e15d0855-e263-4fe2-81b8-d5c04653b5e2",
+    "name": "Mexican",
+    "created_at": "2026-07-10T19:11:11.488Z"
+  },
+  {
+    "id": "ea5aab59-3882-41be-967a-2e82d556f704",
+    "name": "Breakfast",
+    "created_at": "2026-07-10T19:11:11.488Z"
+  },
+  {
+    "id": "ecdbee13-f404-4da2-ac2b-365a041da2ae",
+    "name": "American",
+    "created_at": "2026-07-10T19:11:11.488Z"
+  },
+  {
+    "id": "f24924aa-ca7b-4a05-884e-18b3c6e86297",
+    "name": "Italian",
+    "created_at": "2026-07-10T19:11:11.488Z"
+  }
+]
