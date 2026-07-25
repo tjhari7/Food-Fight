@@ -1,0 +1,507 @@
+@font-face {
+  font-family: 'Gliker';
+  src: url('./assets/fonts/Gliker-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gliker Black';
+  src: url('./assets/Gliker/Gliker Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gliker Black Extra Expanded';
+  src: url('./assets/fonts/Gliker-Black-ExtraExpanded.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gliker Regular Semi Condensed';
+  src: url('./assets/fonts/Gliker-Regular-SemiCondensed.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gliker Regular Condensed';
+  src: url('./assets/fonts/Gliker-Regular-Condensed.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gliker Bold Semi Condensed';
+  src: url('./assets/fonts/Gliker-Bold-SemiCondensed.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gliker Semi Bold';
+  src: url('./assets/fonts/Gliker-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gliker Regular';
+  src: url('./assets/fonts/Gliker-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Recoleta SemiBold';
+  src: url('./assets/Recoleta/Recoleta SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --color-bg: #FAF6E8;
+  --color-card: #FFFCF5;
+  --color-card-hover: #FBF7EC;
+  --color-border: rgba(55, 49, 44, 0.1);
+  --color-border-hover: rgba(122, 92, 56, 0.28);
+  --color-text: #37312C;
+  --color-text-hover: #504943;
+  --color-text-muted: #514C46;
+  --color-text-muted-hover: #7D756B;
+  --color-accent: #DF2121;
+  --color-accent-hover: #F74040;
+
+  --font-serif: 'Instrument Serif', serif;
+  --font-sans: 'DM Sans', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  /* Keeps pages that sit off-screen mid-transition from widening the page.
+     `clip` (not `hidden`) so no scroll container is created; fixed overlays
+     like the iris are unaffected. */
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%23514C46'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 36px !important;
+}
+
+a {
+  color: inherit;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-size: 24px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Back-button swipe: the page's content slides off toward the side it lives on,
+   handing off to Home's mirror slide-in (see .home--entering*). Applied to the
+   children rather than the page box so that `position: fixed` chrome — the All
+   Meals FAB, the alphabet index — keeps resolving against the viewport.
+   Transforming the page itself would make it their containing block and fling
+   them down to the bottom of the full list. */
+.page.swipe-leaving > * {
+  animation: page-swipe-leave 200ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+/* Animates `translate`, not `transform`: the two are separate properties that
+   compose, so children with a transform of their own (the alphabet index
+   centres itself with translateY(-50%)) keep it instead of having it clobbered
+   mid-swipe. */
+@keyframes page-swipe-leave {
+  from {
+    translate: 0;
+  }
+  to {
+    translate: 100vw;
+  }
+}
+
+/* The same, for pages that live to Home's left (All Meals) and so exit that
+   way instead. */
+.page.swipe-leaving-left > * {
+  animation: page-swipe-leave-left 200ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+@keyframes page-swipe-leave-left {
+  from {
+    translate: 0;
+  }
+  to {
+    translate: -100vw;
+  }
+}
+
+/* Arriving from Home into All Meals: slides in from the left as Home slides off
+   right, the exact reverse of All Meals' back swipe. Runs on the children for
+   the same reason the leave does — this page's FAB and alphabet index are both
+   `position: fixed`. Timed to match home-enter-*, so both ends feel the same. */
+.page.swipe-entering-from-left > * {
+  animation: page-swipe-enter-from-left 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes page-swipe-enter-from-left {
+  from {
+    translate: -100vw;
+  }
+  to {
+    translate: 0;
+  }
+}
+
+/* All Meals sits on a vertical strip below Home. Forward (Home -> All Meals):
+   Home slides off the top while All Meals rises from the bottom. Back
+   (All Meals -> Home): All Meals drops off the bottom while Home returns from
+   the top (see .home--entering-up). Same children-not-box reasoning as the
+   horizontal rules — this page's FAB and alphabet index are `position: fixed`. */
+.page.swipe-leaving-up > * {
+  animation: page-swipe-leave-up 150ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+@keyframes page-swipe-leave-up {
+  from {
+    translate: 0;
+  }
+  to {
+    translate: 0 -100vh;
+  }
+}
+
+.page.swipe-leaving-down > * {
+  animation: page-swipe-leave-down 150ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+@keyframes page-swipe-leave-down {
+  from {
+    translate: 0;
+  }
+  to {
+    translate: 0 100vh;
+  }
+}
+
+.page.swipe-entering-from-below > * {
+  animation: page-swipe-enter-from-below 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes page-swipe-enter-from-below {
+  from {
+    translate: 0 100vh;
+  }
+  to {
+    translate: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page.swipe-leaving > *,
+  .page.swipe-leaving-left > *,
+  .page.swipe-leaving-up > *,
+  .page.swipe-leaving-down > *,
+  .page.swipe-entering-from-left > *,
+  .page.swipe-entering-from-below > * {
+    animation: none;
+  }
+}
+
+/* Meal card <-> meal detail morph. The tapped list card and the detail card share
+   a view-transition-name, so the browser tweens the box between the two
+   positions; the same pairing runs in reverse on back, which is why there's no
+   separate close animation. Everything else on both pages lands in the root
+   snapshot and cross-fades underneath — that's what carries the list chrome out
+   and the detail header buttons in. Driven from lib/morph.js. */
+
+/* easeOutCubic rather than the easeOutExpo used elsewhere in this file. Expo is
+   extreme enough to be counterproductive here: it reaches 94% of the card's
+   travel in the first 40% of its duration, so the visible motion is over almost
+   at once and the rest is a sub-pixel crawl. Lengthening the duration only
+   stretches the part you can't see. Cubic still decelerates into the landing but
+   spreads the travel across the whole run, which is what actually reads as
+   slower. Raise the duration for more weight; flatten toward easeOutQuad
+   (0.25, 0.46, 0.45, 0.94) for a gentler settle. */
+::view-transition-group(meal-card) {
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* Draw both snapshots at natural size pinned to the top-left, rather than the UA
+   default of `width: 100%; height: auto` — that scales each snapshot to the
+   box as it grows, stretching the list card's text to detail width on the way
+   through. Pinning instead keeps the eyebrow and title sitting still while the
+   card opens around them, and clips the rest until there's room for it. */
+::view-transition-old(meal-card),
+::view-transition-new(meal-card) {
+  width: 100%;
+  height: 100%;
+  object-fit: none;
+  object-position: top left;
+}
+
+/* The card's old contents are gone almost before the box has started moving, so
+   what grows (or shrinks) is an empty card rather than one dragging the previous
+   page's text along with it. Decelerating curves on both: the fade does most of
+   its work in the first few frames, which is what sells "immediately" at this
+   duration.
+
+   No delay on the incoming half, so the two overlap for the outgoing fade's 90ms
+   — both snapshots sit in the same box, so that window is the one place a double
+   image of the title can show. It stays mild only because the outgoing fade is
+   front-loaded enough to be down to ~16% opacity by the 45ms midpoint. Reintroduce
+   a delay here if it reads as muddy. */
+::view-transition-old(meal-card) {
+  animation: morph-contents-out 90ms cubic-bezier(0, 0, 0.2, 1) both;
+}
+
+::view-transition-new(meal-card) {
+  animation: morph-contents-in 300ms cubic-bezier(0, 0, 0.2, 1) both;
+}
+
+@keyframes morph-contents-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes morph-contents-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The two halves of the page cross-fade run on deliberately different clocks.
+   Outgoing: everything around the card is gone in a few frames, leaving the card
+   to travel alone against the bare background — body's background sits on the
+   canvas, not in the snapshot, so clearing this fast can't flash. Incoming: left
+   at the slower fade the header buttons and list chrome already arrive on.
+   Symmetric by construction — the browser labels the departing page "old" and the
+   arriving one "new" whichever way you're going, so close matches open for free. */
+::view-transition-old(root) {
+  animation-duration: 90ms;
+  animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+::view-transition-new(root) {
+  animation-duration: 420ms;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  margin-bottom: 16px;
+}
+
+.page-header .back-header {
+  margin-bottom: 0;
+}
+
+.spacer-lg {
+  height: 32px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Device frame
+ *
+ * This app is designed as a mobile experience. On desktop, pin the whole
+ * thing inside a stroked 375x812 phone frame rather than letting it sprawl.
+ * Below the breakpoint the frame is an inert passthrough — real phones get
+ * the full-bleed layout exactly as before.
+ *
+ * The frame is a genuine containing block (via `transform`) AND the scroll
+ * container for its content. That does the two hard jobs at once: every
+ * `position: fixed` descendant — the All Meals FAB, the alphabet index, the
+ * iris and confirm-dialog overlays — now resolves to the frame instead of
+ * escaping to the window edges, and pages taller than 812px scroll inside
+ * the frame rather than growing the window.
+ *
+ * 601px matches the existing max-width:600px phone breakpoint. Keep it in
+ * sync with the matchMedia check in lib/iris.js and the #boot-iris media
+ * query in index.html.
+ * ------------------------------------------------------------------ */
+@media (min-width: 601px) {
+  #root {
+    display: flex;
+    justify-content: center;
+    /* Anchor to the top (not center) so a frame taller than the window stays
+       fully scroll-reachable, and so its top edge lines up with #boot-iris. */
+    align-items: flex-start;
+    padding: 16px;
+    /* The desktop/tablet desk behind the device frame. */
+    background: var(--color-bg);
+  }
+
+  .device-frame {
+    flex: none;
+    width: 375px;
+    /* 812px on tall windows; on shorter ones, cap to the viewport (minus the
+       16px desk padding top and bottom) so the frame stays fully on screen and
+       only its own content scrolls — never the window on top of it. */
+    height: min(812px, calc(100dvh - 32px));
+    /* Clip content to the frame, but do NOT scroll here: the transform below
+       makes this the containing block for fixed descendants, and a fixed child
+       of a *scrolling* transformed box scrolls away with the content instead of
+       staying pinned. The inner .device-frame__scroll does the scrolling. */
+    overflow: hidden;
+    /* Establishes the containing block that traps fixed descendants inside the
+       frame so the FAB / A–Z index / iris resolve to it and stay locked. */
+    transform: translateZ(0);
+    background: var(--color-bg);
+    /* 1px stroke on the *outside* of the frame (Figma "outside" stroke). A real
+       border sits inside the box; box-shadow with spread paints outward without
+       affecting layout and still follows the border-radius. */
+    box-shadow: 0 0 0 1px var(--color-border-hover);
+    border-radius: 24px;
+  }
+
+  /* The real scroll container. It has no transform, so it is NOT a containing
+     block for fixed chrome — that keeps resolving to .device-frame and stays put
+     while this element scrolls the content underneath. */
+  .device-frame__scroll {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* A phone has no chrome scrollbar; hide it to keep the illusion. */
+    scrollbar-width: none;
+  }
+
+  .device-frame__scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Size content to the frame, not the viewport, so short pages fill the 812px
+     box and the fixed New Round button anchors to the frame's bottom edge
+     rather than the window's. */
+  .device-frame .page {
+    min-height: 100%;
+  }
+
+  .device-frame .results-page {
+    height: 100%;
+  }
+
+  /* These rules centre fixed chrome against a 640px column on wide viewports
+     via `(100vw - 640px) / 2` gutter math. Inside the frame there is no gutter
+     — the frame *is* the column — so pin them straight to its edges. */
+  .device-frame .alphabet-index {
+    right: 0;
+  }
+
+  .device-frame .alphabet-index__bubble {
+    right: 32px;
+  }
+
+  .device-frame .all-meals__fab {
+    right: 16px;
+  }
+
+  /* The results title bleeds edge-to-edge via width:100vw; inside the frame
+     that would overflow onto the desk, so bleed to the frame's own 375px
+     edges instead. width:100% (the previous approach) fills only the
+     320px .results-page__body column, which is too narrow for the longest
+     headline word ("Course") — Chrome renders an overflowing centered line
+     flush to the container's start edge rather than splitting the overflow
+     evenly, so the word bled out to the right only instead of staying
+     centered. The body sits centered inside the frame (11.5px gutter from
+     .page's own 16px padding + auto-centering), so its center already
+     matches the frame's center — breaking out -27.5px each side reaches
+     the frame edges exactly, mirroring the mobile 100vw bleed. */
+  .device-frame .results__title {
+    width: 375px;
+    margin-left: -27.5px;
+  }
+}

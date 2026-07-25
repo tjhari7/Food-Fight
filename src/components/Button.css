@@ -1,0 +1,74 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 0 28px;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 14px;
+  border: none;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, border-width 0.15s ease,
+    color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn--primary,
+.btn--secondary {
+  height: 48px;
+}
+
+.btn--primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.btn--secondary {
+  background: var(--color-card);
+  border: 1.5px solid var(--color-text);
+  color: var(--color-text);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  border-width: 2.5px;
+}
+
+@media (hover: hover) {
+  .btn--secondary:hover:not(:disabled) {
+    background: #FFFFFF;
+  }
+}
+
+.btn--text {
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  text-transform: none;
+  font-weight: 700;
+  letter-spacing: normal;
+  padding: 8px 4px;
+}
+
+.btn--text:hover:not(:disabled) {
+  color: var(--color-text-hover);
+}
+
+.btn--full {
+  width: 100%;
+}

@@ -1,0 +1,44 @@
+.settings__title {
+  font-family: 'Gliker Semi Bold', var(--font-sans);
+  font-weight: 600;
+  font-size: 2rem;
+  margin-bottom: 16px;
+}
+
+.settings__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px 14px 16px 18px;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  color: var(--color-text);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.settings__item:hover {
+  background: white;
+  border-color: var(--color-border-hover);
+}
+
+.settings__item-label {
+  font-weight: 500;
+}
+
+.settings__item-chevron {
+  color: var(--color-text-muted);
+  font-size: 22px;
+}

@@ -1,0 +1,115 @@
+.form-cancel {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 4px 0;
+  transition: color 0.15s ease;
+}
+
+.form-cancel:hover {
+  color: var(--color-text-muted-hover);
+}
+
+.form-title {
+  font-family: 'Gliker Semi Bold', var(--font-sans);
+  font-weight: 600;
+  font-size: 2rem;
+  margin-bottom: 24px;
+}
+
+.meal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.field input,
+.field select {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  width: 100%;
+  min-width: 0;
+  transition: border-color 0.15s ease;
+}
+
+.field input:hover,
+.field select:hover {
+  border-color: var(--color-border-hover);
+}
+
+.field input:focus,
+.field select:focus {
+  outline: 1.5px solid var(--color-accent);
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.field-row--three {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.ingredient-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ingredient-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr auto;
+  gap: 4px;
+  align-items: center;
+}
+
+.ingredient-row input {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  min-width: 0;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  transition: border-color 0.15s ease;
+}
+
+.ingredient-row input:hover {
+  border-color: var(--color-border-hover);
+}
+
+.add-ingredient {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  font-weight: 700;
+  padding: 8px 0;
+  align-self: flex-start;
+  transition: color 0.15s ease;
+}
+
+.add-ingredient:hover {
+  color: var(--color-accent-hover);
+}
+
+.form-error {
+  color: var(--color-accent);
+  font-size: 0.9rem;
+}

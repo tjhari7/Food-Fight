@@ -1,0 +1,410 @@
+.detail__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.detail__winner-title {
+  font-family: 'Gliker Black Extra Expanded', var(--font-sans);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-accent);
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+/* Slide the winner header and card up into place, mirroring the main event
+   page's entrance (results-enter): rise from translateY(200px) with easeOutQuart
+   over 1400ms, while the opacity fades in faster (700ms) so content is fully
+   solid before it finishes settling. The impact burst, title and card share
+   timing so they rise in unison. (The burst centres itself with `margin: auto`,
+   not a transform, so winner-rise's translateY has the transform to itself.) */
+.detail__winner-impact,
+.detail__winner-title,
+.detail__card--winner {
+  animation:
+    winner-rise 1400ms cubic-bezier(0.25, 1, 0.5, 1) both,
+    winner-fade 1000ms cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+@keyframes winner-rise {
+  from {
+    transform: translateY(200px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes winner-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detail__winner-impact,
+  .detail__winner-title,
+  .detail__card--winner {
+    animation: none;
+  }
+}
+
+/* Impact_Winner_Meal burst, centred above the winner headline: top 32px, 182×44,
+   horizontally centred. Absolutely positioned so it sits in the header band
+   without pushing the headline down. Centred with auto side margins rather than
+   translateX(-50%) so winner-rise keeps sole use of `transform`. */
+.detail__winner-impact {
+  position: absolute;
+  top: var(--winner-impact-top);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 182px;
+  height: var(--winner-impact-height);
+  display: block;
+  pointer-events: none;
+}
+
+/* The Dinner Winner */
+.detail__winner-title--1 {
+  font-size: 46px;
+  line-height: 40px;
+}
+
+/* Heavy Hitter Dinner */
+.detail__winner-title--2 {
+  font-size: 46px;
+  line-height: 40px;
+}
+
+/* Last Meal Stands — 3-line lockup: Last / Meal / Stands */
+.detail__winner-title--3 {
+  font-size: 46px;
+  line-height: 40px;
+}
+
+.detail__winner-title--3 span {
+  white-space: nowrap;
+}
+
+/* Your Dinner Champ */
+.detail__winner-title--4 {
+  font-size: 46px;
+  line-height: 40px;
+}
+
+/* Served By The Bell — 3-line lockup: Served / By The / Bell */
+.detail__winner-title--5 {
+  font-size: 46px;
+  line-height: 40px;
+}
+
+.detail__winner-title--5 span {
+  white-space: nowrap;
+}
+
+/* Meal Of The Ring — 3-line lockup: Meal / Of The / Ring */
+.detail__winner-title--6 {
+  font-size: 46px;
+  line-height: 40px;
+}
+
+.detail__winner-title--6 span {
+  white-space: nowrap;
+}
+
+/* Ring Ding Dinner — 3-line lockup: Ring / Ding / Dinner */
+.detail__winner-title--7 {
+  font-size: 46px;
+  line-height: 40px;
+}
+
+.detail__winner-title--7 span {
+  white-space: nowrap;
+}
+
+/* Heavyweight Meal — 3-line lockup: Heavy / Weight / Meal */
+.detail__winner-title--8 {
+  font-size: 46px;
+  line-height: 40px;
+}
+
+.detail__winner-title--8 span {
+  white-space: nowrap;
+}
+
+/* Now Chow Down — 3-line lockup: Now / Chow / Down */
+.detail__winner-title--9 {
+  font-size: 46px;
+  line-height: 40px;
+}
+
+.detail__winner-title--9 span {
+  white-space: nowrap;
+}
+
+.detail__card {
+  position: relative;
+  text-align: left;
+  padding: 24px;
+}
+
+/* Winner variant matches the Figma frame: no stroke, and a full-bleed panel so
+   the text lands 40px from the frame edge. The card breaks out of the page's
+   horizontal padding with negative margins (never a transform — that would
+   collide with winner-rise) and re-adds it as 40px internal padding. */
+.detail__card--winner {
+  border: none;
+  /* Square top and corners — the curved edge comes from the Curve_Shape.svg
+     dome placed just above the panel (see .detail__winner-curve). The base
+     .card has border-radius: 16px, so it must be reset to 0 here or the rounded
+     top corners leave a gap against the square-bottomed SVG. */
+  border-radius: 0;
+  /* Full-bleed: break out of the centered .page column so the panel fill — and
+     the curve dome pinned above it, which is a child and inherits this width —
+     spans the whole viewport on every screen. `50%` resolves against the page's
+     content box, so this equals the old -20px (and -16px under 600px) on phones
+     where the page already fills the screen, and grows to reach the viewport
+     edges on wider screens. Margin, never a transform, so it can't collide with
+     winner-rise. */
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  padding-top: 24px;
+  /* Inset the content from the viewport edge while the fill spans full width. The
+     inset steps up per breakpoint via --winner-inset (set on .detail-page--winner
+     below); the winner title shares the same variable so the two stay aligned. */
+  padding-left: var(--winner-inset);
+  padding-right: var(--winner-inset);
+  /* Grow to fill the page (which is a flex column on the winner view) so the
+     panel fill always reaches the bottom of the screen — the page background
+     is never visible below the curve. */
+  flex: 1;
+}
+
+/* Winner view only: stack as a flex column and drop the page's bottom padding
+   so the panel can stretch flush to the bottom edge. `position: relative` makes
+   the page the containing block for the absolutely-positioned impact burst. */
+.page.detail-page--winner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+  /* Side inset for the winner content column (title + card body). Phones use the
+     40px base; wider viewports step it up at the breakpoints below. Both the card
+     and the title read this, so they align at every width. */
+  --winner-inset: 40px;
+  /* Winner burst vertical spacing — both independently tweakable. --winner-impact-top
+     is the gap from the frame top down to the burst; --winner-impact-gap is the gap
+     from the burst down to the headline. --winner-impact-height is the burst's own
+     height (kept as a var so the headline offset below tracks it automatically). */
+  --winner-impact-top: 24px;
+  --winner-impact-height: 44px;
+  --winner-impact-gap: 16px;
+}
+
+/* Sit the whole winner group (impact burst, headline, card) 16px lower than the
+   base layout while the close/edit icons stay put — matching Figma, where the
+   headline lands at top:84 vs the ~68 the base header spacing would give. The
+   header's own 16px bottom margin becomes 32px, pushing its flow siblings (the
+   title and card) down together; the absolutely-positioned burst carries the
+   same offset via its top:32. Purely layout — winner-rise still animates each
+   element from the same +200px offset, so the fade-up is unchanged, just lower.
+   The burst is out of flow, so this margin doesn't affect it. */
+.page.detail-page--winner .page-header {
+  /* Sit the headline --winner-impact-gap below the burst while the close/edit icons
+     stay put. The burst bottom is at (--winner-impact-top + --winner-impact-height);
+     the header already fills the 16px page padding + its own 36px height (= 52px)
+     above the headline, so its bottom margin makes up the rest. Purely layout —
+     winner-rise still animates each element from the same +200px offset, so the
+     fade-up is unchanged, just positioned lower. */
+  margin-bottom: calc(
+    var(--winner-impact-top) + var(--winner-impact-height) + var(--winner-impact-gap) - 52px
+  );
+}
+
+@media (min-width: 765px) {
+  .page.detail-page--winner {
+    --winner-inset: 80px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page.detail-page--winner {
+    --winner-inset: 120px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .page.detail-page--winner {
+    --winner-inset: 148px;
+  }
+}
+
+@media (min-width: 2560px) {
+  .page.detail-page--winner {
+    --winner-inset: 240px;
+  }
+}
+
+/* From 765px up, let the winner page span the full viewport so the title and
+   card can be inset with plain positive margins/padding (= --winner-inset) rather
+   than a negative full-bleed offset. Only the header is re-capped to the 640px
+   column so the back/edit buttons stay exactly where they were — max-width 640
+   with auto margins reproduces the old (viewport - 640) / 2 + 20 position. Phones
+   (< 765px) keep the page-capped title and the card's negative-margin breakout. */
+@media (min-width: 765px) {
+  .page.detail-page--winner {
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .page.detail-page--winner .page-header {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* Now a real positive side margin — this is the value shown in DevTools. Text
+     stays centered, so the margin just sets the gutter and the room a long
+     headline has. */
+  .detail__winner-title {
+    margin-left: var(--winner-inset);
+    margin-right: var(--winner-inset);
+  }
+
+  /* The page is full width here, so the card no longer needs to break out; it
+     already fills the viewport. Its padding (--winner-inset) still insets the
+     content and the curve dome child still spans edge to edge. */
+  .detail__card--winner {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* Inside the desktop/tablet device frame (a fixed 375px column) the window-width
+   --winner-inset above steps up to 80px+, which is far too much gutter for the
+   narrow frame. Pin the winner card's text inset to 40px and drop the title's
+   side margin to 0 so both fill the frame. Real phones (< 601px, where the frame
+   is inert) keep the responsive insets above. */
+@media (min-width: 601px) {
+  .device-frame .detail__card--winner {
+    /* The base full-bleed (margin: calc(-50vw + 50%)) measures 50vw against the
+       browser window, not the 375px frame — inside the frame that yanks the card
+       far off to the left. The 765px reset to margin:0 only fires when the window
+       is that wide, so between 601–765px the broken bleed is left in place. Pin a
+       fixed -16px here instead: it cancels the page's 16px padding so the panel
+       bleeds exactly to the frame edge, matching a real phone, at every window
+       width the frame is active. */
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  .device-frame .detail__winner-title {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* The panel's curved top edge. Full-bleed dome sitting directly above the
+   square panel; its fill (#FFFCF5) matches the card so the seam is invisible.
+   It's a child of the card, so it rises with the winner-rise animation. The 1px
+   overlap hides any subpixel gap at the seam. */
+.detail__winner-curve {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% - 1px);
+  width: 100%;
+  /* Keep the dome's natural proportions on phones/tablets (height tracks width),
+     but cap it on wide viewports: once the panel spans the full browser the
+     aspect-preserved dome would grow tall enough to swallow the winner title, so
+     clamp the height and let object-fit: fill stretch the arc horizontally into a
+     gentle full-width curve instead. Below the cap the box matches the intrinsic
+     size, so fill is a no-op and the curve is undistorted. */
+  height: auto;
+  max-height: 64px;
+  object-fit: fill;
+  display: block;
+  pointer-events: none;
+}
+
+.detail__title {
+  font-family: 'Gliker Semi Bold', var(--font-sans);
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1.1;
+  margin: 8px 0 16px;
+  letter-spacing: 0.5px;
+}
+
+.detail__times {
+  display: flex;
+  gap: 24px;
+  color: var(--color-text);
+  margin-bottom: 32px;
+}
+
+.detail__times .eyebrow {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.detail__section {
+  margin-bottom: 28px;
+}
+
+.detail__section-title {
+  font-family: 'Gliker Regular', var(--font-sans);
+  font-weight: 400;
+  font-size: 24px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.detail__macros {
+  display: flex;
+  gap: 32px;
+}
+
+.detail__macros p:not(.eyebrow) {
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+.detail__ingredients {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail__ingredients li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 10px;
+  font-size: 16px;
+}
+
+.detail__ingredient-amount {
+  color: var(--color-text-muted);
+}
+
+.detail__number {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  margin-top: 40px;
+}

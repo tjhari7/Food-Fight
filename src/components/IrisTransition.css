@@ -1,0 +1,20 @@
+/* The iris is a solid circular <div> scaled with `transform`, deliberately NOT an
+   animated `clip-path` (which mis-centres on some GPUs — see IrisTransition.jsx).
+   The wrapper is a full-box clip; the circle inside is sized/positioned per-origin
+   in JS and scaled 0↔1. */
+.iris-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  pointer-events: all;
+}
+
+.iris-overlay__circle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--color-accent);
+  transform: scale(0);
+  transform-origin: center;
+  will-change: transform;
+}

@@ -1,0 +1,44 @@
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: var(--color-border-hover);
+  color: var(--color-text-hover);
+}
+
+.icon-btn--danger:hover {
+  color: var(--color-accent);
+}
+
+.icon-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.icon-btn:disabled:hover {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.icon-btn--filled {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.icon-btn--filled:hover {
+  background: #FFFFFF;
+  border-color: var(--color-border-hover);
+  color: var(--color-text-hover);
+}

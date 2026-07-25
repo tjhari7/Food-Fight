@@ -1,0 +1,172 @@
+.results-page {
+  display: flex;
+  flex-direction: column;
+  /* Pin to the viewport height so the New Round button anchors to the bottom of
+     the screen. Card growth is then absorbed by the stage above it instead of
+     pushing the button up and down between rounds. */
+  height: 100vh;
+  height: 100dvh;
+  /* Keeps the button clear of the iOS home indicator / nav bar so it never
+     covers the button on a phone. */
+  padding-bottom: 54px;
+  /* Clips content while it sits fully off-screen during the New Round swipe. */
+  overflow-x: clip;
+  /* Override the .page top padding on this page only. */
+  padding-top: 16px;
+}
+
+/* Tighten the gap beneath the back button on the main event page only. */
+.results-page .page-header {
+  margin-bottom: 4px;
+}
+
+.results-page__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  /* easeOutExpo (easings.net); 300ms delay waits out the iris reveal (REVEAL_MS) */
+  animation: results-enter 1400ms cubic-bezier(0.16, 1, 0.3, 1) 300ms both;
+}
+
+/* Hugs its content and sits at the top of the body (no top gap above the
+   hero). Height comes from the content, not flex:1, so the New Round button
+   follows directly below with its own fixed cushion. */
+.results__stage {
+  flex: 0 0 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+@keyframes results-enter {
+  from {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* New Round swipe: old content exits fully off-screen left, fresh content
+   enters fully from off-screen right. Enter mirrors the page reveal's
+   easeOutExpo; exit uses its reverse (easeInExpo) so content accelerates
+   off-screen with no dead pause before the new round slides in. */
+.results__swipe--exit {
+  animation: results-swipe-out 200ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+.results__swipe--enter {
+  animation: results-swipe-in 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes results-swipe-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-100vw);
+  }
+}
+
+@keyframes results-swipe-in {
+  from {
+    opacity: 1;
+    transform: translateX(100vw);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .results-page__body,
+  .results__swipe--exit,
+  .results__swipe--enter {
+    animation: none;
+  }
+}
+
+.results__hero-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto -24px;
+}
+
+.results__title {
+  font-family: 'Gliker Black Extra Expanded', var(--font-sans);
+  font-weight: 900;
+  font-size: 46px;
+  line-height: 40px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-accent);
+  margin-bottom: 16px;
+  text-align: center;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+.results__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.results__vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Gliker Black Extra Expanded', var(--font-sans);
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text);
+  text-align: center;
+  margin-top: 4px;
+}
+
+.results__vs-squiggle {
+  height: 20px;
+  width: auto;
+}
+
+.results__reroll {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* Fixed cushion between the cards and the button (replaces the old
+     centering gap now that the stage hugs its content). */
+  margin-top: 28px;
+  height: 54px;
+  font-family: 'Gliker Black', var(--font-sans);
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+
+.results__reroll-label {
+  position: relative;
+  top: 2px;
+}
+
+.results__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  color: var(--color-text-muted);
+  padding: 24px 0;
+}

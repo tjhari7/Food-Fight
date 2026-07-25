@@ -1,0 +1,64 @@
+.alphabet-index {
+  position: fixed;
+  /* .page maxes out at 640px and centers itself on wider viewports, so
+     anchoring to the viewport edge (right:0) would drift away from the
+     actual page content there. Track the page's real right edge instead. */
+  right: max(0px, calc((100vw - 640px) / 2));
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  max-height: 70vh;
+  padding: 6px 2px;
+  z-index: 20;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.alphabet-index__letter {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 1;
+  color: var(--color-accent);
+  padding: 1px 2px;
+}
+
+.alphabet-index__letter--empty {
+  color: var(--color-text-muted);
+  opacity: 0.4;
+}
+
+.alphabet-index__letter--active {
+  color: var(--color-accent-hover);
+  transform: scale(1.3);
+}
+
+.alphabet-index__bubble {
+  position: fixed;
+  right: calc(max(0px, (100vw - 640px) / 2) + 32px);
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-text);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Gliker Semi Bold', var(--font-sans);
+  font-weight: 600;
+  font-size: 28px;
+  pointer-events: none;
+  z-index: 21;
+  box-shadow: 0 4px 12px rgba(55, 49, 44, 0.25);
+}
+
+.alphabet-index__bubble-letter {
+  display: inline-block;
+  transform: translateY(3px);
+}

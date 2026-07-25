@@ -1,0 +1,404 @@
+/* Positioning context for the decorative impact burst, which is anchored to the
+   page box exactly as in Figma (frame-relative, not title-relative). */
+.all-meals-page {
+  position: relative;
+}
+
+.all-meals__title {
+  font-family: 'Gliker Black Extra Expanded', var(--font-sans);
+  font-weight: 900;
+  font-size: 40px;
+  line-height: 34px;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+/* Impact_All_Meals burst: Figma node 620:6107, x=234 y=24 in the 375px frame →
+   top:24px, right:87px (375 − (234 + 54)) from the page box, 54×54. */
+.all-meals__impact {
+  position: absolute;
+  top: 24px;
+  right: 87px;
+  width: 54px;
+  height: 54px;
+  pointer-events: none;
+}
+
+.all-meals__search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  /* The swipe-in animation leaves a resting `translate: 0` on every direct
+     child of `.page` (animation-fill-mode: both), which turns each into its own
+     stacking context. Without this, the filter popover's z-index is trapped
+     inside this row's context and the later-in-DOM meal grid paints over it.
+     Lifting the whole row above the grid keeps the open popover on top. */
+  position: relative;
+  z-index: 30;
+}
+
+.all-meals__search {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 48px;
+  flex: 1;
+  min-width: 0;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0 16px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.all-meals__search:hover {
+  background: #FFFFFF;
+  border-color: var(--color-border-hover);
+}
+
+.all-meals__search:focus-within {
+  border-color: var(--color-accent);
+}
+
+.all-meals__search-icon {
+  color: var(--color-text-muted);
+}
+
+.all-meals__search input {
+  border: none;
+  background: none;
+  outline: none;
+  flex: 1;
+  min-width: 0;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.all-meals__clear-btn {
+  flex-shrink: 0;
+}
+
+.all-meals__search-divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 28px;
+  background: var(--color-border);
+}
+
+.all-meals__mic-btn {
+  flex-shrink: 0;
+  margin-right: -8px;
+}
+
+.all-meals__mic-btn--active {
+  background: var(--color-border-hover);
+  color: var(--color-text-muted);
+  border: 1.5px solid var(--color-accent);
+  animation: all-meals-mic-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes all-meals-mic-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.all-meals__filter {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.all-meals__filter-btn {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.all-meals__filter-btn:hover {
+  background: #FFFFFF;
+  border-color: var(--color-border-hover);
+}
+
+.all-meals__filter-btn--active {
+  border-color: var(--color-accent);
+}
+
+.all-meals__filter-icon {
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.all-meals__filter-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  min-width: 200px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(55, 49, 44, 0.18);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.all-meals__filter-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.all-meals__filter-option:hover {
+  background: var(--color-card-hover);
+}
+
+.all-meals__filter-option input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.all-meals__filter-clear {
+  margin-top: 4px;
+  padding: 8px;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  font-size: 16px;
+  text-align: left;
+  text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+.all-meals__filter-clear:hover {
+  color: var(--color-text-muted-hover);
+}
+
+.all-meals__count-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+
+.all-meals__count-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  height: 30px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.all-meals__count-chip-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.all-meals__count-chip--active {
+  background: var(--color-card);
+  border-color: var(--color-text);
+  color: var(--color-text);
+  border-radius: 999px;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.all-meals__count-chip--active:hover {
+  background: var(--color-card-hover);
+  border-color: var(--color-text-hover);
+  color: var(--color-text-hover);
+}
+
+.all-meals__count-chip-mic-icon {
+  font-size: 13px;
+  vertical-align: -2px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.all-meals__count-chip-icon {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.all-meals__count-clear {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  top: -1px;
+  height: 30px;
+  padding: 0 4px;
+  border: none;
+  background: none;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+}
+
+.all-meals__count-clear:hover {
+  color: var(--color-text-hover);
+}
+
+.all-meals__empty {
+  color: var(--color-text-muted);
+  padding: 12px 0;
+}
+
+.all-meals__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-bottom: 96px;
+  /* Inset the cards from the right only, clearing a finger-friendly strip for
+     the fixed A–Z index that sits at the page's right edge. The header row,
+     title, search row, and filters live outside this grid, so their width is
+     untouched. */
+  margin-right: 11px;
+}
+
+@media (min-width: 520px) {
+  .all-meals__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Desktop/tablet: inside the 375px device frame the window-width rule above
+   switches the grid to two columns. Restore the mobile layout — a single column
+   of 332px cards (the page's 16px gutters leave room for the A–Z index on the
+   right) — so the framed list matches the phone view. */
+@media (min-width: 601px) {
+  .device-frame .all-meals__grid {
+    grid-template-columns: 332px;
+    margin-right: 0;
+  }
+}
+
+.all-meals__section-header {
+  grid-column: 1 / -1;
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: 0.8rem;
+  padding: 6px 4px 0;
+  margin-top: 4px;
+  margin-bottom: -4.5px;
+}
+
+.all-meals__fab {
+  position: fixed;
+  right: max(16px, calc((100vw - 640px) / 2 + 16px));
+  bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 54px;
+  padding: 0 20px 0 16px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  border: none;
+  color: #fff;
+  font-family: 'Gliker Black', var(--font-sans);
+  font-size: 24px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(55, 49, 44, 0.28);
+  z-index: 22;
+  transition: background-color 0.15s ease, transform 0.1s ease,
+    padding 0.36s cubic-bezier(0.34, 1.8, 0.5, 1);
+}
+
+.all-meals__fab-icon {
+  width: 16px;
+  height: 14px;
+  flex-shrink: 0;
+  /* Direction-specific: a transition is governed by the *target* state's rule,
+     so this easing runs on EXPAND (opening to scale 1). Plain ease — the
+     already-larger "+" just shrinks down to its original size, no spring. The
+     springy collapse easing lives on the collapsed rule below. */
+  transition: transform 0.5s ease;
+}
+
+.all-meals__fab-label {
+  position: relative;
+  top: 2px;
+  margin-left: 8px;
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 0.36s cubic-bezier(0.34, 1.8, 0.5, 1), opacity 0.1s ease,
+    margin-left 0.36s cubic-bezier(0.34, 1.8, 0.5, 1);
+}
+
+/* Collapsed: shrink to a circular "+" while scrolling down. The width is left
+   to follow the padding (icon 16px + 19px each side = 54px) rather than being
+   set explicitly, so it animates in sync instead of snapping and jolting the
+   centered icon. */
+.all-meals__fab--collapsed {
+  padding: 0 19px;
+}
+
+.all-meals__fab--collapsed .all-meals__fab-label {
+  max-width: 0;
+  margin-left: 0;
+  opacity: 0;
+}
+
+/* A slightly larger "+" in the collapsed circle. This rule is the target when
+   COLLAPSING, so its easing runs on close: the "+" grows past 1.35, then settles
+   back — the springy pop. (Expand easing is on the base .all-meals__fab-icon.) */
+.all-meals__fab--collapsed .all-meals__fab-icon {
+  transform: scale(1.35);
+  transition: transform 0.75s cubic-bezier(0.34, 2.6, 0.5, 1);
+}
+
+.all-meals__fab:hover {
+  background: var(--color-accent-hover);
+}
+
+.all-meals__fab:active {
+  transform: scale(0.97);
+}
