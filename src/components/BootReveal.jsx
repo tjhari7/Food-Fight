@@ -3,7 +3,7 @@ import { useData } from '../context/DataContext.jsx'
 import { EASE, REVEAL_MS, irisRadius, prefersReducedMotion } from '../lib/iris.js'
 
 // Never hold past this, so a stalled fetch can't strand the user on red.
-const MAX_HOLD_MS = 2000
+const MAX_HOLD_MS = 1000
 
 // First load only: navigating away and back must not replay it.
 let revealed = false

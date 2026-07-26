@@ -8,10 +8,10 @@ import { mealMatchesIngredients } from '../lib/ingredientMatch'
 import { prefersReducedMotion, useSwipeBackHome } from '../lib/swipeBack'
 import BackHeader from '../components/BackHeader'
 import Button from '../components/Button'
-import Icon from '../components/Icon'
 import leftSquiggle from '../assets/Left_Bolt.svg'
 import rightSquiggle from '../assets/Right_Bolt.svg'
-import fistImage from '../assets/Fist_Test.png'
+import fistImage from '../assets/Main_Event_Fist_Fight_01.png'
+import refreshIcon from '../assets/Icon_Refresh_Round.svg'
 import './FindMealResults.css'
 
 function matchesFilters(meal, filters) {
@@ -159,7 +159,7 @@ export default function FindMealResults() {
 
       <div className="results-page__body">
         <div className="results__stage">
-          <img src={fistImage} alt="" className={`results__hero-image ${swipeClass}`.trim()} />
+          <img src={fistImage} alt="" className="results__hero-image" />
           <h1 className={`results__title ${swipeClass}`.trim()} onAnimationEnd={handleSwipeEnd}>
             {headline.lines.map((line, i) => (
               <span key={i}>
@@ -205,7 +205,7 @@ export default function FindMealResults() {
 
         {!loading && filteredPool.length > 0 && (
           <Button variant="secondary" className="btn--full results__reroll" onClick={handleReroll}>
-            <Icon name="refresh" /> <span className="results__reroll-label">New Round</span>
+            <img src={refreshIcon} alt="" className="results__reroll-icon" /> <span className="results__reroll-label">New Round</span>
           </Button>
         )}
       </div>

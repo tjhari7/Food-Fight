@@ -157,6 +157,12 @@
   letter-spacing: 1px;
 }
 
+.results__reroll-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
 .results__reroll-label {
   position: relative;
   top: 2px;
