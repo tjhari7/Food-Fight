@@ -41,6 +41,18 @@
       {
         "name": "Pad Noodles",
         "amount": ""
+      },
+      {
+        "name": "Soy Sauce",
+        "amount": ""
+      },
+      {
+        "name": "Peppers",
+        "amount": ""
+      },
+      {
+        "name": "Eggs",
+        "amount": ""
       }
     ],
     "created_at": "2026-07-19T05:51:18.641Z"
@@ -75,6 +87,14 @@
       {
         "name": "Rice",
         "amount": ""
+      },
+      {
+        "name": "Beyond Meat",
+        "amount": ""
+      },
+      {
+        "name": "Veggies",
+        "amount": ""
       }
     ],
     "created_at": "2026-07-19T05:52:38.686Z"
@@ -95,6 +115,18 @@
       },
       {
         "name": "Hummas",
+        "amount": ""
+      },
+      {
+        "name": "Veggies",
+        "amount": ""
+      },
+      {
+        "name": "Mayo",
+        "amount": ""
+      },
+      {
+        "name": "Mustard",
         "amount": ""
       }
     ],
@@ -138,7 +170,20 @@
     "protein_g": "12",
     "carbs_g": "35",
     "fats_g": "11",
-    "ingredients": [],
+    "ingredients": [
+      {
+        "name": "Beans",
+        "amount": ""
+      },
+      {
+        "name": "Potatoes",
+        "amount": ""
+      },
+      {
+        "name": "Veggies",
+        "amount": ""
+      }
+    ],
     "created_at": "2026-07-10T18:58:24.149Z"
   },
   {
@@ -156,7 +201,7 @@
         "amount": ""
       },
       {
-        "name": "Chicken Broth",
+        "name": "Broth",
         "amount": ""
       },
       {
@@ -165,6 +210,14 @@
       },
       {
         "name": "Green Onions",
+        "amount": ""
+      },
+      {
+        "name": "Veggies",
+        "amount": ""
+      },
+      {
+        "name": "Seaweed",
         "amount": ""
       }
     ],
@@ -273,6 +326,18 @@
       {
         "name": "Eggs",
         "amount": ""
+      },
+      {
+        "name": "Veggies",
+        "amount": ""
+      },
+      {
+        "name": "Mushrooms",
+        "amount": ""
+      },
+      {
+        "name": "Peppers",
+        "amount": ""
       }
     ],
     "created_at": "2026-07-19T05:55:01.664Z"
@@ -323,6 +388,10 @@
       {
         "name": "Heavy Cream",
         "amount": ""
+      },
+      {
+        "name": "Alfredo Sauce",
+        "amount": ""
       }
     ],
     "created_at": "2026-07-10T19:19:26.081Z"
@@ -351,6 +420,10 @@
       },
       {
         "name": "Onion",
+        "amount": ""
+      },
+      {
+        "name": "Soup",
         "amount": ""
       }
     ],
@@ -426,6 +499,22 @@
     "ingredients": [
       {
         "name": "Waffle Mix",
+        "amount": ""
+      },
+      {
+        "name": "Milk",
+        "amount": ""
+      },
+      {
+        "name": "Egg",
+        "amount": ""
+      },
+      {
+        "name": "Syrup",
+        "amount": ""
+      },
+      {
+        "name": "Fruit",
         "amount": ""
       }
     ],
@@ -547,6 +636,10 @@
       {
         "name": "Butter",
         "amount": ""
+      },
+      {
+        "name": "Veggies",
+        "amount": ""
       }
     ],
     "created_at": "2026-07-10T18:58:24.149Z"
@@ -563,7 +656,7 @@
     "ingredients": [
       {
         "name": "Beyond Meat",
-        "amount": ""
+        "amount": "4oz"
       },
       {
         "name": "Burger Bun",
@@ -609,6 +702,10 @@
       {
         "name": "Mixed Berries",
         "amount": ""
+      },
+      {
+        "name": "Syrup",
+        "amount": ""
       }
     ],
     "created_at": "2026-07-10T18:58:24.149Z"
@@ -651,6 +748,10 @@
       {
         "name": "Tofu",
         "amount": ""
+      },
+      {
+        "name": "Rice",
+        "amount": ""
       }
     ],
     "created_at": "2026-07-19T05:51:51.901Z"
@@ -676,6 +777,14 @@
       {
         "name": "Syrup",
         "amount": ""
+      },
+      {
+        "name": "Fruit",
+        "amount": ""
+      },
+      {
+        "name": "Butter",
+        "amount": ""
       }
     ],
     "created_at": "2026-07-18T20:56:36.452Z"
@@ -700,6 +809,10 @@
       },
       {
         "name": "Spinach",
+        "amount": ""
+      },
+      {
+        "name": "Veggie Sausage",
         "amount": ""
       }
     ],
@@ -817,6 +930,14 @@
       {
         "name": "Veggies",
         "amount": ""
+      },
+      {
+        "name": "Egg",
+        "amount": ""
+      },
+      {
+        "name": "Tofu",
+        "amount": ""
       }
     ],
     "created_at": "2026-07-19T05:57:06.100Z"
@@ -867,6 +988,10 @@
       {
         "name": "Greens",
         "amount": ""
+      },
+      {
+        "name": "Veggies",
+        "amount": ""
       }
     ],
     "created_at": "2026-07-19T07:26:58.729Z"
@@ -915,7 +1040,15 @@
     "fats_g": "24",
     "ingredients": [
       {
+        "name": "Toast",
+        "amount": ""
+      },
+      {
         "name": "Avocado",
+        "amount": ""
+      },
+      {
+        "name": "Butter",
         "amount": ""
       }
     ],
