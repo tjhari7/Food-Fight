@@ -1040,15 +1040,7 @@
     "fats_g": "24",
     "ingredients": [
       {
-        "name": "Toast",
-        "amount": ""
-      },
-      {
         "name": "Avocado",
-        "amount": ""
-      },
-      {
-        "name": "Butter",
         "amount": ""
       }
     ],
