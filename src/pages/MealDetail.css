@@ -10,7 +10,8 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--color-accent);
-  margin-bottom: 40px;
+  margin-top: 0;
+  margin-bottom: 48px;
   text-align: center;
 }
 
@@ -54,7 +55,7 @@
   }
 }
 
-/* Impact_Winner_Meal burst, centred above the winner headline: top 32px, 182×44,
+/* Impact_All_Meals_2 burst, centred above the winner headline: top 24px, 120×66,
    horizontally centred. Absolutely positioned so it sits in the header band
    without pushing the headline down. Centred with auto side margins rather than
    translateX(-50%) so winner-rise keeps sole use of `transform`. */
@@ -64,7 +65,7 @@
   left: 0;
   right: 0;
   margin: 0 auto;
-  width: 182px;
+  width: 120px;
   height: var(--winner-impact-height);
   display: block;
   pointer-events: none;
@@ -203,28 +204,22 @@
      from the burst down to the headline. --winner-impact-height is the burst's own
      height (kept as a var so the headline offset below tracks it automatically). */
   --winner-impact-top: 24px;
-  --winner-impact-height: 44px;
+  --winner-impact-height: 66px;
   --winner-impact-gap: 16px;
 }
 
-/* Sit the whole winner group (impact burst, headline, card) 16px lower than the
-   base layout while the close/edit icons stay put — matching Figma, where the
-   headline lands at top:84 vs the ~68 the base header spacing would give. The
-   header's own 16px bottom margin becomes 32px, pushing its flow siblings (the
-   title and card) down together; the absolutely-positioned burst carries the
-   same offset via its top:32. Purely layout — winner-rise still animates each
-   element from the same +200px offset, so the fade-up is unchanged, just lower.
-   The burst is out of flow, so this margin doesn't affect it. */
+/* Sit the whole winner group (impact burst, headline, card) lower than the base
+   layout while the close/edit icons stay put. The header's own 16px bottom
+   margin is padded out further here, pushing its flow siblings (the title and
+   card) down together; the burst itself is absolutely positioned and carries
+   its own offset via --winner-impact-top, so this margin doesn't affect it.
+   Bumped by 22px (24px → 46px) when the impact burst grew from 44px to 66px
+   tall, so the title/card keep the same gap below the burst as before, just
+   shifted down by the burst's extra height. Purely layout — winner-rise still
+   animates each element from the same +200px offset, so the fade-up is
+   unchanged, just lower. */
 .page.detail-page--winner .page-header {
-  /* Sit the headline --winner-impact-gap below the burst while the close/edit icons
-     stay put. The burst bottom is at (--winner-impact-top + --winner-impact-height);
-     the header already fills the 16px page padding + its own 36px height (= 52px)
-     above the headline, so its bottom margin makes up the rest. Purely layout —
-     winner-rise still animates each element from the same +200px offset, so the
-     fade-up is unchanged, just positioned lower. */
-  margin-bottom: calc(
-    var(--winner-impact-top) + var(--winner-impact-height) + var(--winner-impact-gap) - 52px
-  );
+  margin-bottom: 46px;
 }
 
 @media (min-width: 765px) {
@@ -344,7 +339,7 @@
   font-weight: 600;
   font-size: 2rem;
   line-height: 1.1;
-  margin: 8px 0 16px;
+  margin: 4px 0 16px;
   letter-spacing: 0.5px;
 }
 
@@ -403,8 +398,34 @@
   color: var(--color-text-muted);
 }
 
-.detail__number {
-  color: var(--color-text-muted);
-  font-size: 0.8rem;
-  margin-top: 40px;
+/* Rematch. Deliberately identical to the main event's New Round button
+   (.results__reroll in FindMealResults.css) — same intent, "not this one, show
+   me another" — so the control the user meets here is the one they'll see again
+   on the fight screen they land back on. Keep the two rules in sync.
+   Secondary, not primary: this sits on the winner panel, and a red fill would
+   make "reject this meal" the loudest thing on the celebration.
+   No margins: the button hangs off the last section's own bottom spacing, and
+   the card's 24px bottom padding is what holds it off the panel's edge. */
+.detail__rematch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 54px;
+  font-family: 'Gliker Black', var(--font-sans);
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+
+.detail__rematch-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+/* Same optical nudge the other Gliker Black 24px pill labels use — see
+   --btn-label-optical-nudge in index.css. */
+.detail__rematch-label {
+  position: relative;
+  top: var(--btn-label-optical-nudge);
 }

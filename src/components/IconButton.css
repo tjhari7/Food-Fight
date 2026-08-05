@@ -1,4 +1,5 @@
 .icon-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -10,6 +11,26 @@
   color: var(--color-text-muted);
   text-decoration: none;
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Invisible 44px touch target on the 36px button — an overlay, not padding,
+   so the visible circle never grows or shifts. Rounded rect (not a circle)
+   per design direction, sized via clip-path since border-radius alone only
+   affects paint, not hit-testing.
+   inset resolves against the padding box: plain .icon-btn has no border, so
+   its padding box is the full 36px and -4px lands on 44 (36 + 4 + 4). */
+.icon-btn::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  clip-path: inset(0 round var(--touch-target-radius));
+}
+
+/* .icon-btn--filled adds a 1px border, which eats 2px off the 36px
+   border-box, leaving a 34px padding box — so -5px (not -4px) is what
+   actually lands on 44: 34 + 5 + 5 = 44. */
+.icon-btn--filled::before {
+  inset: -5px;
 }
 
 .icon-btn:hover {
@@ -41,4 +62,14 @@
   background: #FFFFFF;
   border-color: var(--color-border-hover);
   color: var(--color-text-hover);
+}
+
+/* Solid cut of the Material Symbol inside. FILL is a real axis on the variable
+   font (see .material-symbols-outlined in index.css for the default), so this
+   is a weight change on the glyph already loaded — no second icon asset — and
+   it interpolates, which is why the outline visibly fattens into the solid
+   rather than swapping frames. */
+.icon-btn--icon-filled .material-symbols-outlined {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  transition: font-variation-settings 200ms ease;
 }

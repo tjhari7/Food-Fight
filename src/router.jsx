@@ -7,6 +7,7 @@ import ManageCategories from './pages/ManageCategories.jsx'
 import Settings from './pages/Settings.jsx'
 import FindMealResults from './pages/FindMealResults.jsx'
 import MealDetail from './pages/MealDetail.jsx'
+import Onboarding from './pages/Onboarding.jsx'
 
 // A data router rather than <BrowserRouter>, because view transitions need one:
 // <BrowserRouter> pushes its location update through React.startTransition, so a
@@ -25,6 +26,9 @@ export const router = createBrowserRouter([
       { path: '/categories', element: <ManageCategories /> },
       { path: '/settings', element: <Settings /> },
       { path: '/find/results', element: <FindMealResults /> },
+      // Two onboarding variants under test — /onboarding/a (10 screens) and
+      // /onboarding/b (6). Neither writes to Supabase; see onboarding/flows.js.
+      { path: '/onboarding/:variant', element: <Onboarding /> },
     ],
   },
 ])

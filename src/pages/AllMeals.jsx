@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useData } from '../context/DataContext.jsx'
+import { deleteMeal } from '../api/meals'
 import { ListMealCard } from '../components/MealCard'
 import { shouldMorph } from '../lib/morph'
 import { useSwipeBackHome } from '../lib/swipeBack'
@@ -9,6 +10,7 @@ import BackHeader from '../components/BackHeader'
 import Icon from '../components/Icon'
 import IconButton from '../components/IconButton'
 import AlphabetIndex from '../components/AlphabetIndex'
+import ConfirmDialog from '../components/ConfirmDialog'
 import addIcon from '../assets/Icon_Plus_Add.svg'
 import impactAllMeals from '../assets/Impact_All_Meals.svg'
 import './AllMeals.css'
@@ -61,7 +63,7 @@ const SpeechRecognitionClass =
   typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition)
 
 export default function AllMeals() {
-  const { meals, categories, loading } = useData()
+  const { meals, categories, loading, reload } = useData()
   const navigate = useNavigate()
   const location = useLocation()
   const [query, setQuery] = useState('')
@@ -70,9 +72,13 @@ export default function AllMeals() {
   const [filterOpen, setFilterOpen] = useState(false)
   const [listening, setListening] = useState(false)
   const [fabCollapsed, setFabCollapsed] = useState(false)
+  // At most one card is ever swiped open — opening a second puts the first away.
+  const [swipedMealId, setSwipedMealId] = useState(null)
+  const [pendingDelete, setPendingDelete] = useState(null)
+  const [deleting, setDeleting] = useState(false)
   const filterRef = useRef(null)
   const recognitionRef = useRef(null)
-  const lastScrollYRef = useRef(0)
+  const navRef = useRef(null)
   // 'down': this page sits below Home, so it exits that way and Home returns
   // from the top — the reverse of the swipe that opened it.
   const { leaving, startBack, rootProps, leavingClass } = useSwipeBackHome('down')
@@ -89,23 +95,124 @@ export default function AllMeals() {
     return () => recognitionRef.current?.stop()
   }, [])
 
-  // Collapse the Add Meal FAB to just its "+" while the user scrolls down,
-  // and expand it back to the full pill the instant they scroll up (or reach
-  // the top). A small delta threshold keeps it from flickering on jitter.
+  // Scroll-back header. The whole top block — back button, settings, title,
+  // impact burst, search and filter — rides the page down 1:1 as the user
+  // scrolls, so on the way out it reads as ordinary content rather than as
+  // chrome that snapped away. Scrolling back up snaps it into place at the top
+  // however deep in the list they are. Only the return trip is animated; the
+  // departure is driven straight off scrollTop, which is what makes it feel
+  // like part of the page.
+  //
+  // The Add Meal FAB rides the same signal, collapsing to its "+" whenever the
+  // bar is out of the way and expanding again when it comes back.
   useEffect(() => {
     // The scroller is the window on phones and the device frame's inner scroll
     // container on desktop/tablet — listen on whichever actually moves.
-    const scroller = getPageScroller()
-    lastScrollYRef.current = getScrollTop(scroller)
-    function handleFabScroll() {
-      const y = getScrollTop(scroller)
-      const delta = y - lastScrollYRef.current
-      if (Math.abs(delta) < 4) return
-      setFabCollapsed(y > 0 && delta > 0)
-      lastScrollYRef.current = y
+    let scroller = getPageScroller()
+    const nav = navRef.current
+    if (!nav) return
+
+    // Cached rather than measured per event: the height only changes on resize,
+    // and reading offsetHeight inside a scroll handler forces a layout flush.
+    let navHeight = nav.offsetHeight
+    const resizeObserver = new ResizeObserver(() => {
+      navHeight = nav.offsetHeight
+    })
+    resizeObserver.observe(nav)
+
+    let lastY = getScrollTop(scroller)
+    let offset = 0 // px the bar is pushed above its pinned position
+    let upAccum = 0 // distance scrolled up since the last downward move
+    let revealing = false // a snap-back transition is in flight
+
+    function apply(next, animate) {
+      offset = Math.min(Math.max(next, 0), navHeight)
+      nav.classList.toggle('all-meals__nav--revealing', animate)
+      nav.style.transform = `translateY(${-offset}px)`
+      setFabCollapsed(offset > 0)
     }
-    scroller.addEventListener('scroll', handleFabScroll, { passive: true })
-    return () => scroller.removeEventListener('scroll', handleFabScroll)
+
+    // Where the bar actually is on screen right now. Only needed when a
+    // snap-back is interrupted mid-flight: without it the bar would jump to the
+    // position the transition was still travelling towards.
+    function liveOffset() {
+      const t = getComputedStyle(nav).transform
+      if (!t || t === 'none') return 0
+      return -new DOMMatrixReadOnly(t).m42
+    }
+
+    // A snap-back that ran to completion has left the bar exactly at 0, which we
+    // already know — so clear the flag and let the next downward scroll start
+    // from that instead of paying a forced style read for an answer it can
+    // predict. Interruptions are then the only case that reads the live value.
+    // Descendants transition too (the search field's border, the mic button), so
+    // filter to this element's own transform.
+    function handleTransitionEnd(e) {
+      if (e.target === nav && e.propertyName === 'transform') revealing = false
+    }
+    nav.addEventListener('transitionend', handleTransitionEnd)
+    nav.addEventListener('transitioncancel', handleTransitionEnd)
+
+    // Match the bar to wherever the page was restored to — returning from a
+    // meal detail lands mid-list, where the bar belongs out of view.
+    apply(lastY, false)
+
+    function handleScroll() {
+      const y = getScrollTop(scroller)
+      const delta = y - lastY
+      lastY = y
+      if (!delta) return
+
+      if (Math.abs(delta) > 400) {
+        // The A–Z index scrolls by jumping. That's not a gesture, so it must not
+        // read as one — settle the bar to whatever the landing position implies
+        // instead of treating a jump upward as a request to reveal.
+        upAccum = 0
+        revealing = false
+        apply(y, false)
+      } else if (delta > 0) {
+        upAccum = 0
+        if (revealing) {
+          revealing = false
+          offset = liveOffset()
+        }
+        apply(offset + delta, false)
+      } else {
+        upAccum -= delta
+        // A few pixels of slack so a jittery finger, or the bounce at the end of
+        // a fling, doesn't yank the bar down.
+        if ((y <= 0 || upAccum > 8) && offset !== 0) {
+          revealing = true
+          apply(0, true)
+        }
+      }
+    }
+
+    // Crossing the 601px device-frame breakpoint swaps which element scrolls, so
+    // a listener bound once at mount would go deaf — leaving the bar frozen
+    // wherever it happened to be, which off-screen means a blank strip of creme
+    // where the header should be. Rebind and re-sync when the scroller changes.
+    function handleResize() {
+      const next = getPageScroller()
+      if (next === scroller) return
+      scroller.removeEventListener('scroll', handleScroll)
+      scroller = next
+      scroller.addEventListener('scroll', handleScroll, { passive: true })
+      upAccum = 0
+      revealing = false
+      lastY = getScrollTop(scroller)
+      apply(lastY, false)
+    }
+
+    scroller.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleResize)
+    return () => {
+      scroller.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+      nav.removeEventListener('transitionend', handleTransitionEnd)
+      nav.removeEventListener('transitioncancel', handleTransitionEnd)
+      resizeObserver.disconnect()
+    }
   }, [])
 
   // Drop the forward-nav flag once consumed, so reloading this page doesn't
@@ -193,6 +300,32 @@ export default function AllMeals() {
       window.removeEventListener('scroll', handleScroll, { capture: true })
     }
   }, [filterOpen])
+
+  // Scrolling cancels the swipe: the open card animates back and its delete
+  // button fades out. Capture-phase on window so this catches the scroller
+  // whether it's the window (phones) or the device frame's inner container
+  // (desktop/tablet) — scroll doesn't bubble, but it does capture.
+  useEffect(() => {
+    if (!swipedMealId) return
+    function handleScroll() {
+      setSwipedMealId(null)
+    }
+    window.addEventListener('scroll', handleScroll, { capture: true, passive: true })
+    return () => window.removeEventListener('scroll', handleScroll, { capture: true })
+  }, [swipedMealId])
+
+  async function handleConfirmDelete() {
+    if (!pendingDelete) return
+    setDeleting(true)
+    try {
+      await deleteMeal(pendingDelete.id)
+      await reload()
+      setPendingDelete(null)
+      setSwipedMealId(null)
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   function toggleCategoryFilter(categoryId) {
     setCategoryFilters((prev) =>
@@ -295,96 +428,98 @@ export default function AllMeals() {
       className={`page all-meals-page${enteringClass}${leavingClass}`}
       {...rootProps}
     >
-      <div className="page-header">
-        <BackHeader onBack={startBack} icon="close" label="Close" />
-        <IconButton
-          as={Link}
-          to="/settings"
-          name="more_vert"
-          label="Settings"
-          className="all-meals__menu-btn icon-btn--filled"
-        />
-      </div>
-      <h1 className="all-meals__title">
-        All
-        <br />
-        Meals
-      </h1>
-      <img src={impactAllMeals} alt="" className="all-meals__impact" />
-
-      <div className="all-meals__search-row">
-        <div className="all-meals__search">
-          <Icon name="search" className="all-meals__search-icon" />
-          <input
-            type="text"
-            placeholder={searchPlaceholder}
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value)
-              setVoiceQuery(false)
-            }}
+      <div className="all-meals__nav" ref={navRef}>
+        <div className="page-header">
+          <BackHeader onBack={startBack} icon="close" label="Close" />
+          <IconButton
+            as={Link}
+            to="/settings"
+            name="more_vert"
+            label="Settings"
+            className="all-meals__menu-btn icon-btn--filled"
           />
-          {query && (
-            <IconButton
-              name="close"
-              label="Clear search"
-              className="all-meals__clear-btn"
-              onClick={() => {
-                setQuery('')
+        </div>
+        <h1 className="all-meals__title">
+          All
+          <br />
+          Meals
+        </h1>
+        <img src={impactAllMeals} alt="" className="all-meals__impact" />
+
+        <div className="all-meals__search-row">
+          <div className="all-meals__search">
+            <Icon name="search" className="all-meals__search-icon" />
+            <input
+              type="text"
+              placeholder={searchPlaceholder}
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value)
                 setVoiceQuery(false)
               }}
             />
-          )}
-          {query && SpeechRecognitionClass && <span className="all-meals__search-divider" />}
-          {SpeechRecognitionClass && (
-            <IconButton
-              name="mic"
-              label={listening ? 'Stop voice search' : 'Search by voice'}
-              className={'all-meals__mic-btn' + (listening ? ' all-meals__mic-btn--active' : '')}
-              onClick={handleVoiceSearch}
-            />
-          )}
-        </div>
-        <div className="all-meals__filter" ref={filterRef}>
-          <button
-            type="button"
-            className={
-              'all-meals__filter-btn' +
-              (categoryFilters.length ? ' all-meals__filter-btn--active' : '')
-            }
-            aria-label="Filter meal type"
-            aria-expanded={filterOpen}
-            onClick={() => setFilterOpen((open) => !open)}
-          >
-            <Icon name="tune" className="all-meals__filter-icon" />
-          </button>
+            {query && (
+              <IconButton
+                name="close"
+                label="Clear search"
+                className="all-meals__clear-btn"
+                onClick={() => {
+                  setQuery('')
+                  setVoiceQuery(false)
+                }}
+              />
+            )}
+            {query && SpeechRecognitionClass && <span className="all-meals__search-divider" />}
+            {SpeechRecognitionClass && (
+              <IconButton
+                name="mic"
+                label={listening ? 'Stop voice search' : 'Search by voice'}
+                className={'all-meals__mic-btn' + (listening ? ' all-meals__mic-btn--active' : '')}
+                onClick={handleVoiceSearch}
+              />
+            )}
+          </div>
+          <div className="all-meals__filter" ref={filterRef}>
+            <button
+              type="button"
+              className={
+                'all-meals__filter-btn' +
+                (categoryFilters.length ? ' all-meals__filter-btn--active' : '')
+              }
+              aria-label="Filter meal type"
+              aria-expanded={filterOpen}
+              onClick={() => setFilterOpen((open) => !open)}
+            >
+              <Icon name="tune" className="all-meals__filter-icon" />
+            </button>
 
-          {filterOpen && (
-            <div className="all-meals__filter-popover">
-              {categories.map((c) => {
-                const checked = categoryFilters.includes(c.id)
-                return (
-                  <label key={c.id} className="all-meals__filter-option">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => toggleCategoryFilter(c.id)}
-                    />
-                    <span>{c.name}</span>
-                  </label>
-                )
-              })}
-              {categoryFilters.length > 0 && (
-                <button
-                  type="button"
-                  className="all-meals__filter-clear"
-                  onClick={() => setCategoryFilters([])}
-                >
-                  Clear All
-                </button>
-              )}
-            </div>
-          )}
+            {filterOpen && (
+              <div className="all-meals__filter-popover">
+                {categories.map((c) => {
+                  const checked = categoryFilters.includes(c.id)
+                  return (
+                    <label key={c.id} className="all-meals__filter-option">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleCategoryFilter(c.id)}
+                      />
+                      <span>{c.name}</span>
+                    </label>
+                  )
+                })}
+                {categoryFilters.length > 0 && (
+                  <button
+                    type="button"
+                    className="all-meals__filter-clear"
+                    onClick={() => setCategoryFilters([])}
+                  >
+                    Clear All
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -454,6 +589,9 @@ export default function AllMeals() {
                   categoryName={categoryNameById[meal.category_id] || 'Unassigned'}
                   onClick={() => handleCardClick(meal)}
                   onEdit={() => handleEdit(meal)}
+                  onDelete={() => setPendingDelete(meal)}
+                  open={swipedMealId === meal.id}
+                  onOpenChange={(next) => setSwipedMealId(next ? meal.id : null)}
                 />
               </Fragment>
             )
@@ -476,6 +614,20 @@ export default function AllMeals() {
         <img src={addIcon} alt="" className="all-meals__fab-icon" />
         <span className="all-meals__fab-label">Add Meal</span>
       </Link>
+
+      <ConfirmDialog
+        open={Boolean(pendingDelete)}
+        title="Delete this meal?"
+        message={`"${pendingDelete?.title}" will be permanently removed.`}
+        confirmLabel={deleting ? 'Deleting…' : 'Delete'}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          // Backing out resets the whole interaction, not just the dialog: the
+          // card animates home and its delete button fades out with it.
+          setPendingDelete(null)
+          setSwipedMealId(null)
+        }}
+      />
     </div>
   )
 }

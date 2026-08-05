@@ -1,0 +1,242 @@
+/* Both layers are `position: fixed`. On mobile that resolves to the viewport;
+   on desktop it resolves to .device-frame, which is a containing block via its
+   transform — so the sheet fills the phone frame's width and sits on its
+   bottom edge rather than the window's. Nothing here needs a breakpoint. */
+
+/* The wrapper exists only to group the two layers and to carry the --closing
+   flag. It must generate no box of its own: it mounts as a child of
+   .results-page, which is a flex column, and anything with a box there is a
+   layout change the page can feel every time the drawer opens. `contents`
+   keeps the element in the CSSOM (so .group-drawer--closing still matches
+   below) while removing it from layout entirely. */
+.group-drawer {
+  display: contents;
+}
+
+.group-drawer__scrim {
+  position: fixed;
+  inset: 0;
+  /* 25% of the app's near-black, not pure black — matches the warm cast of
+     .confirm-overlay rather than introducing a second, colder dim. */
+  background: rgba(55, 49, 44, 0.25);
+  z-index: 100;
+  animation: group-drawer-scrim-in 300ms ease both;
+}
+
+.group-drawer--closing .group-drawer__scrim {
+  animation: group-drawer-scrim-out 300ms ease both;
+}
+
+.group-drawer__sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 24px calc(24px + env(safe-area-inset-bottom, 0px));
+  background: var(--color-card);
+  border-radius: 24px 24px 0 0;
+  /* The drag is vertical and the sheet never scrolls, so hand the browser
+     nothing: without this, touch drags get claimed as page scroll before
+     pointermove ever fires. */
+  touch-action: none;
+  transform: translateY(0);
+  /* Spring-back for a drag released short of the threshold. Suppressed while
+     the finger is down (below) so live dragging tracks 1:1 instead of lagging
+     a quarter second behind. */
+  transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  /* `backwards`, NOT `both`. A filled animation keeps applying its final value
+     forever, and an animation beats an inline style in the cascade — so with
+     `both` the entrance would pin transform at translateY(0) for the life of
+     the sheet and silently swallow the drag's inline transform. `backwards`
+     still holds the off-screen start before the first frame (no flash of the
+     sheet at rest) but releases the property once it lands, handing control
+     to the drag. */
+  animation: group-drawer-in 380ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.group-drawer__sheet:focus {
+  outline: none;
+}
+
+.group-drawer__sheet--dragging {
+  transition: none;
+}
+
+/* Starts from wherever the finger let go (--drag-y is written inline by the
+   component) so a drag-to-dismiss continues downward from the sheet's current
+   position instead of snapping back to rest first. An animation beats a
+   transition in the cascade, so the spring-back above can't fight it. */
+.group-drawer__sheet--closing {
+  animation: group-drawer-out 300ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@keyframes group-drawer-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes group-drawer-out {
+  from {
+    transform: translateY(var(--drag-y, 0px));
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes group-drawer-scrim-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes group-drawer-scrim-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .group-drawer__scrim,
+  .group-drawer__sheet,
+  .group-drawer--closing .group-drawer__scrim,
+  .group-drawer__sheet--closing {
+    animation: none;
+    transition: none;
+  }
+}
+
+.group-drawer__grabber {
+  width: 44px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--color-border-hover);
+  margin-bottom: 20px;
+}
+
+.group-drawer__status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.group-drawer__status-icon {
+  font-size: 18px;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.group-drawer__title {
+  font-family: 'Gliker Black', var(--font-sans);
+  font-weight: 900;
+  font-size: 30px;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.group-drawer__body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 300px;
+  margin-bottom: 24px;
+}
+
+.group-drawer__actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Not the shared .btn: these are 14px sentence-case pills with a leading icon,
+   where .btn--secondary is a 900-weight uppercase 1px-tracked control. Sharing
+   it would mean overriding nearly every property that makes it that button. */
+.group-drawer__action {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-text);
+  background: var(--color-card);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-width 0.15s ease, transform 0.1s ease;
+}
+
+.group-drawer__action:active {
+  transform: scale(0.98);
+}
+
+@media (hover: hover) {
+  .group-drawer__action:hover {
+    background: #FFFFFF;
+    border-width: 2.5px;
+  }
+}
+
+.group-drawer__action-icon {
+  font-size: 20px;
+}
+
+/* Matches .home__link (the "View All Meals" text link on the home page) —
+   underlined black, not a red destructive control. Kept as its own rule rather
+   than reusing .home__link so this doesn't inherit that page's stylesheet. */
+.group-drawer__cancel {
+  position: relative;
+  margin-top: 20px;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+/* Invisible ~44px touch target — see IconButton.css for the technique. */
+.group-drawer__cancel::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  clip-path: inset(0 round var(--touch-target-radius));
+}
+
+.group-drawer__cancel:hover {
+  color: var(--color-text-muted-hover);
+}

@@ -6,18 +6,67 @@
      pushing the button up and down between rounds. */
   height: 100vh;
   height: 100dvh;
-  /* Keeps the button clear of the iOS home indicator / nav bar so it never
-     covers the button on a phone. */
-  padding-bottom: 54px;
+  padding-bottom: 16px;
   /* Clips content while it sits fully off-screen during the New Round swipe. */
   overflow-x: clip;
-  /* Override the .page top padding on this page only. */
-  padding-top: 16px;
+  /* Override the .page top padding on this page only. This is what sets the
+     hero art's distance from the top of the screen, now that the back button
+     is out of flow (see .results-page .page-header below). It does NOT move
+     that button: an absolutely-positioned box resolves its offsets against the
+     containing block's padding box, so `top: 16px` stays 16px from the page's
+     top edge no matter what this value is. */
+  padding-top: 48px;
+  /* Containing block for the out-of-flow back button. Deliberately `relative`
+     and not a transform: a transform here would also capture any `position:
+     fixed` descendant, which is the trap the .page.swipe-leaving comment in
+     index.css warns about. */
+  position: relative;
+  /* New stacking context so the back button's z-index (below) only competes
+     with this page's own content, not anything global like a modal. */
+  isolation: isolate;
 }
 
-/* Tighten the gap beneath the back button on the main event page only. */
+/* Float the back button over the top of the hero art on the main event page.
+   In flow it contributed 36px + margin and pushed the illustration down to
+   56px; out of flow the hero (and everything below it) rides up to the page's
+   own padding-top. The art's top-left corner is empty, so the button reads
+   cleanly against it. Inset matches the .page gutter so the button doesn't
+   move from where it sat before. */
 .results-page .page-header {
-  margin-bottom: 4px;
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  margin-bottom: 0;
+  /* Guarantees the back button (and its expanded hit area below) paints above
+     the hero art and everything else on this page. */
+  z-index: 1;
+}
+
+/* Judge count pill. Absolutely positioned rather than left to the header's
+   `space-between`, which would only centre it while the two round buttons
+   stay identical widths — and it has to hold the centre when the group icon
+   is absent too (see canFight in FindMealResults.jsx). The header is already
+   `position: absolute` above, so it's the containing block. */
+.results__judges {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Guard only: the longest real string is "10 Food Fight Judges". Keeps the
+     pill clear of the 36px buttons either side if the copy ever grows. */
+  max-width: calc(100% - 96px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--color-text);
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.2;
 }
 
 .results-page__body {
@@ -135,7 +184,6 @@
   letter-spacing: 1px;
   color: var(--color-text);
   text-align: center;
-  margin-top: 4px;
 }
 
 .results__vs-squiggle {
@@ -165,7 +213,7 @@
 
 .results__reroll-label {
   position: relative;
-  top: 2px;
+  top: var(--btn-label-optical-nudge);
 }
 
 .results__empty {

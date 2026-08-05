@@ -6,8 +6,13 @@ import { shuffle } from '../lib/random'
 import { MAIN_EVENT_HEADLINES, pickNextHeadline } from '../lib/mainEventHeadlines'
 import { mealMatchesIngredients } from '../lib/ingredientMatch'
 import { prefersReducedMotion, useSwipeBackHome } from '../lib/swipeBack'
+import { useGroupJudges, formatJudges, buildInviteLink } from '../lib/groupDecision'
 import BackHeader from '../components/BackHeader'
 import Button from '../components/Button'
+import IconButton from '../components/IconButton'
+import GroupDrawer from '../components/GroupDrawer'
+import ConfirmDialog from '../components/ConfirmDialog'
+import Toast from '../components/Toast'
 import leftSquiggle from '../assets/Left_Bolt.svg'
 import rightSquiggle from '../assets/Right_Bolt.svg'
 import fistImage from '../assets/Main_Event_Fist_Fight_01.png'
@@ -28,13 +33,39 @@ export default function FindMealResults() {
   const filters = location.state?.filters || {}
   const incomingPicks = location.state?.picks || null
   const incomingExclusion = location.state?.exclusionIds || []
+  // Set only when arriving back from a Rematch tap on the winner view — the
+  // signal that this mount should keep the loser and draw one new challenger
+  // rather than replay (or fully reshuffle) the standing pair.
+  const incomingWinnerId = location.state?.winnerId || null
+  const incomingLoserId = location.state?.loserId || null
+  const isRematch = Boolean(incomingLoserId)
 
-  const [currentPickIds, setCurrentPickIds] = useState(incomingPicks)
-  const [exclusionIds, setExclusionIds] = useState(new Set(incomingExclusion))
+  const [currentPickIds, setCurrentPickIds] = useState(isRematch ? null : incomingPicks)
+  const [exclusionIds, setExclusionIds] = useState(() => {
+    const base = new Set(incomingExclusion)
+    // The winner is the meal a rematch is rejecting (often for lack of
+    // ingredients) — keep it out of the challenger draw until the pool
+    // rotates past it.
+    if (incomingWinnerId) base.add(incomingWinnerId)
+    return base
+  })
   const [headline, setHeadline] = useState(MAIN_EVENT_HEADLINES[0])
   const [phase, setPhase] = useState('idle') // 'idle' | 'exit' | 'enter' | 'leave'
   const headlineQueueRef = useRef([])
   const { leaving, startBack, rootProps, leavingClass } = useSwipeBackHome()
+
+  // Group decision. Entirely client-side — see lib/groupDecision.js. `active`
+  // is what locks the round: once judges are in, the standing matchup is the
+  // thing being voted on, so it can't be rerolled or crowned by hand.
+  const [groupActive, setGroupActive] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [confirmingCancel, setConfirmingCancel] = useState(false)
+  const [toastMessage, setToastMessage] = useState(null)
+  // The host's own pick while a group is running. Exclusive and re-selectable
+  // — tapping the other contender moves the choice rather than adding to it,
+  // so the host can go back and forth before calling the fight.
+  const [selectedId, setSelectedId] = useState(null)
+  const judgeCount = useGroupJudges(groupActive)
 
   // Frozen at mount: clearing the flag below must not retract the class
   // mid-animation. Only the winner sits to this page's right, so a back swipe
@@ -74,11 +105,33 @@ export default function FindMealResults() {
 
   useEffect(() => {
     if (loading) return
-    if (currentPickIds === null && filteredPool.length > 0) {
-      const picked = shuffle(filteredPool).slice(0, targetCount)
-      setCurrentPickIds(picked.map((m) => m.id))
+    if (currentPickIds !== null || filteredPool.length === 0) return
+
+    if (isRematch) {
+      const loserMeal = filteredPool.find((m) => m.id === incomingLoserId)
+      if (loserMeal) {
+        let pool = filteredPool.filter((m) => m.id !== incomingLoserId && !exclusionIds.has(m.id))
+        // Exhausted the rotation — let it wrap rather than getting stuck.
+        if (pool.length === 0) pool = filteredPool.filter((m) => m.id !== incomingLoserId)
+        const challenger = shuffle(pool)[0]
+        if (challenger) {
+          // Challenger up top, loser held in the second slot — so the meal
+          // that's still in play visibly sits below the VS, not above it.
+          setCurrentPickIds([challenger.id, loserMeal.id])
+          const { headline: nextHeadline, queue } = pickNextHeadline(headline.id, headlineQueueRef.current)
+          headlineQueueRef.current = queue
+          setHeadline(nextHeadline)
+          return
+        }
+      }
+      // Loser got filtered out (or no candidates at all) — fall back to a
+      // fresh shuffle below rather than leaving the round unresolved.
     }
-  }, [loading, filteredPool, currentPickIds, targetCount])
+
+    const picked = shuffle(filteredPool).slice(0, targetCount)
+    setCurrentPickIds(picked.map((m) => m.id))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, filteredPool, currentPickIds, targetCount, isRematch, incomingLoserId, exclusionIds])
 
   const currentPicks = useMemo(() => {
     if (!currentPickIds) return []
@@ -105,7 +158,10 @@ export default function FindMealResults() {
   }
 
   function handleReroll() {
-    if (phase !== 'idle' || leaving) return
+    // The button is swapped out for Fight Decision while a group is running,
+    // so this is unreachable then — belt and braces against a stray keyboard
+    // activation landing on a stale handler mid-transition.
+    if (phase !== 'idle' || leaving || groupActive) return
     // Reduced motion: swap instantly — the animationend that drives the
     // phase machine never fires when animations are disabled.
     if (prefersReducedMotion()) {
@@ -135,7 +191,16 @@ export default function FindMealResults() {
 
   const swipeClass = phase === 'idle' ? '' : `results__swipe--${phase}`
 
-  function handleCardClick(meal) {
+  // A group decision needs two contenders to decide between. A one-meal pool
+  // (or a pool still loading) has no fight to judge, so the entry point isn't
+  // offered at all rather than opening a drawer that can't lead anywhere.
+  const canFight = !loading && currentPicks.length === 2
+
+  // The one route to the winner view. Both ways of settling a fight — a
+  // hand-crowned tap and a group's Fight Decision — land here with the same
+  // state, so the winner page needs no notion of which one produced it.
+  function goToWinner(meal) {
+    const loser = currentPicks.find((m) => m.id !== meal.id)
     navigate(`/meals/${meal.id}`, {
       state: {
         fromMainEvent: true,
@@ -145,16 +210,100 @@ export default function FindMealResults() {
             filters,
             picks: currentPickIds,
             exclusionIds: Array.from(exclusionIds),
+            winnerId: meal.id,
+            loserId: loser ? loser.id : null,
           },
         },
       },
     })
   }
 
+  // Outside a group a tap crowns the meal outright. Inside one the round
+  // belongs to the judges, so the same tap only records the host's pick.
+  function handleCardClick(meal) {
+    if (groupActive) {
+      setSelectedId(meal.id)
+      return
+    }
+    goToWinner(meal)
+  }
+
+  // Calling the fight. The judges are decoration: the outcome is a coin flip
+  // between the two standing picks, with no tally behind it.
+  function handleFightDecision() {
+    if (currentPicks.length === 0 || leaving) return
+    goToWinner(currentPicks[Math.floor(Math.random() * currentPicks.length)])
+  }
+
+  function activateGroup(message) {
+    setGroupActive(true)
+    setToastMessage(message)
+  }
+
+  async function handleCopyLink() {
+    const link = buildInviteLink()
+    try {
+      await navigator.clipboard.writeText(link)
+      activateGroup('Link copied.')
+    } catch {
+      // Clipboard access is refused on insecure origins and in some embedded
+      // webviews. The group still opens — losing the copy shouldn't cost the
+      // host the round they just started.
+      activateGroup('Group decision started.')
+    }
+  }
+
+  async function handleShareLink() {
+    const link = buildInviteLink()
+    if (!navigator.share) {
+      handleCopyLink()
+      return
+    }
+    try {
+      await navigator.share({
+        title: 'Food Fight',
+        text: 'Judge this fight — which one should we make?',
+        url: link,
+      })
+      activateGroup('Link shared.')
+    } catch {
+      // Covers the user dismissing the share sheet (AbortError), which is a
+      // decision not to invite anyone — so no group is opened.
+    }
+  }
+
+  function handleCancelGroup() {
+    setGroupActive(false)
+    setConfirmingCancel(false)
+    setDrawerOpen(false)
+    // Cards go back to being the way to crown a winner, so a stale red check
+    // must not survive into the ungrouped round.
+    setSelectedId(null)
+  }
+
   return (
     <div className={`page results-page${enteringClass}${leavingClass}`} {...rootProps}>
       <div className="page-header">
         <BackHeader onBack={handleBack} />
+
+        {/* Judge count, centred between the two round buttons. Hidden while
+            the drawer is open — the sheet is already saying everything the
+            pill says, and it would sit behind the scrim regardless. */}
+        {groupActive && !drawerOpen && (
+          <span className="results__judges" aria-live="polite">
+            {formatJudges(judgeCount)}
+          </span>
+        )}
+
+        {canFight && (
+          <IconButton
+            name="group_add"
+            label={groupActive ? 'Group decision — manage' : 'Start a group decision'}
+            size={20}
+            className={`icon-btn--filled${groupActive ? ' icon-btn--icon-filled' : ''}`}
+            onClick={() => setDrawerOpen(true)}
+          />
+        )}
       </div>
 
       <div className="results-page__body">
@@ -196,6 +345,8 @@ export default function FindMealResults() {
                     categoryName={categoryNameById[meal.category_id] || 'Unassigned'}
                     onClick={() => handleCardClick(meal)}
                     className={swipeClass}
+                    selectable={groupActive}
+                    selected={groupActive && selectedId === meal.id}
                   />
                 </Fragment>
               ))}
@@ -203,12 +354,54 @@ export default function FindMealResults() {
           )}
         </div>
 
+        {/* One button, two jobs. With a group running the round is settled by
+            calling the fight, not by drawing a new one — so New Round is
+            replaced rather than disabled alongside it. The refresh glyph goes
+            with it: it means "another one", which is the opposite of what this
+            button now does. */}
         {!loading && filteredPool.length > 0 && (
-          <Button variant="secondary" className="btn--full results__reroll" onClick={handleReroll}>
-            <img src={refreshIcon} alt="" className="results__reroll-icon" /> <span className="results__reroll-label">New Round</span>
-          </Button>
+          groupActive ? (
+            <Button
+              variant="secondary"
+              className="btn--full results__reroll"
+              onClick={handleFightDecision}
+            >
+              <span className="results__reroll-label">Fight Decision</span>
+            </Button>
+          ) : (
+            <Button variant="secondary" className="btn--full results__reroll" onClick={handleReroll}>
+              <img src={refreshIcon} alt="" className="results__reroll-icon" /> <span className="results__reroll-label">New Round</span>
+            </Button>
+          )
         )}
       </div>
+
+      {/* Outside .results-page__body on purpose: that element keeps a
+          transform from its entrance animation (results-enter, fill `both`),
+          and any non-none transform makes it the containing block for
+          `position: fixed` descendants — which would strand the drawer and
+          the toast inside a 320px column instead of pinning them to the
+          screen (or, on desktop, the device frame). */}
+      <GroupDrawer
+        open={drawerOpen}
+        active={groupActive}
+        onClose={() => setDrawerOpen(false)}
+        onCopyLink={handleCopyLink}
+        onShareLink={handleShareLink}
+        onCancelGroup={() => setConfirmingCancel(true)}
+      />
+
+      <ConfirmDialog
+        open={confirmingCancel}
+        title="Cancel this group decision?"
+        message="Every judge loses this fight and you'll have to start over."
+        confirmLabel="Cancel"
+        cancelLabel="Nevermind"
+        onConfirm={handleCancelGroup}
+        onCancel={() => setConfirmingCancel(false)}
+      />
+
+      <Toast message={toastMessage} onDismiss={() => setToastMessage(null)} />
     </div>
   )
 }

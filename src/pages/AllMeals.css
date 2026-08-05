@@ -4,6 +4,60 @@
   position: relative;
 }
 
+/* ------------------------------------------------------------------ *
+ * Scroll-back header
+ *
+ * Everything above the list — back button, settings, title, impact burst,
+ * search and filter — pins to the top of the scroller and is pushed back out
+ * of view by a transform that AllMeals.jsx drives 1:1 from scrollTop. Sticky
+ * rather than fixed so the block keeps its space in the flow: going fixed
+ * would drop ~220px out of the document and shunt the whole list upward the
+ * moment the bar pinned.
+ *
+ * The negative margins cancel .page's 16px padding so the creme fill spans the
+ * full page width; the matching padding puts the controls back on their
+ * gutters. Because the two exactly cancel, this box's border edges land on
+ * .all-meals-page's, which is what keeps the absolutely-positioned impact
+ * burst on its Figma coordinates now that it resolves against this box.
+ *
+ * The bottom 16px is fill overhang below the search bar (and stands in for the
+ * margin the search row used to carry).
+ * ------------------------------------------------------------------ */
+.all-meals__nav {
+  position: sticky;
+  top: 0;
+  /* Above the list, and above the sticky A–Z section headers (z-index 15) that
+     slide up underneath it. The swipe-in animation leaves a resting
+     `translate: 0` on every direct child of `.page` (animation-fill-mode:
+     both), so this box is a stacking context regardless and the open filter
+     popover is trapped inside it — this is what carries the popover over the
+     later-in-DOM meal grid. */
+  z-index: 30;
+  margin: -16px -16px 0;
+  padding: 16px;
+  background: var(--color-bg);
+  will-change: transform;
+}
+
+/* Only the return into view is animated — the way out is scroll-driven, so a
+   transition there would fight the finger and lag behind the page.
+
+   Patagonia's own nav curve, and deliberately not the easeOutExpo used for the
+   page swipes: expo covers ~94% of the travel in the first 40% of its run, so
+   lengthening it only stretches the part you can't see and it still reads as a
+   snap. This one eases into the motion and back out of it, which is what makes
+   a 640ms slide feel unhurried rather than merely late. Flatten toward
+   `cubic-bezier(0.4, 0, 0.2, 1)` for a touch more urgency at the start. */
+.all-meals__nav--revealing {
+  transition: transform 0.64s cubic-bezier(0.265, 0.035, 0.205, 0.995);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .all-meals__nav--revealing {
+    transition: none;
+  }
+}
+
 .all-meals__title {
   font-family: 'Gliker Black Extra Expanded', var(--font-sans);
   font-weight: 900;
@@ -30,14 +84,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 16px;
-  /* The swipe-in animation leaves a resting `translate: 0` on every direct
-     child of `.page` (animation-fill-mode: both), which turns each into its own
-     stacking context. Without this, the filter popover's z-index is trapped
-     inside this row's context and the later-in-DOM meal grid paints over it.
-     Lifting the whole row above the grid keeps the open popover on top. */
-  position: relative;
-  z-index: 30;
+  /* No bottom margin: the gap below the search bar is the scroll-back header's
+     own 16px of padding, so the creme fill covers it. */
 }
 
 .all-meals__search {
@@ -179,6 +227,7 @@
 }
 
 .all-meals__filter-clear {
+  position: relative;
   margin-top: 4px;
   padding: 8px;
   border: none;
@@ -190,6 +239,17 @@
   text-align: left;
   text-decoration: underline;
   transition: color 0.15s ease;
+}
+
+/* Invisible 44px-ish touch target — see IconButton.css for the technique.
+   Top is capped at -2px (not the full expansion) because only 4px of
+   margin-top separates this from the last checkbox row above; a fuller
+   overlay would start stealing taps meant for that option. */
+.all-meals__filter-clear::before {
+  content: '';
+  position: absolute;
+  inset: -2px -6px -8px -6px;
+  clip-path: inset(0 round var(--touch-target-radius));
 }
 
 .all-meals__filter-clear:hover {
@@ -205,6 +265,7 @@
 }
 
 .all-meals__count-chip {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -215,9 +276,23 @@
   color: var(--color-text-muted);
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   line-height: 1;
   padding: 0;
+}
+
+/* Invisible touch target — see IconButton.css for the technique. Capped
+   (not the full -8px that would reach 44px) because .all-meals__count-row's
+   gap is only 8px. inset resolves against the padding box, and the 1px
+   border eats 1px of *visual* reach on each side — so -5px (not -4px) is
+   what actually overhangs 4px past the visible edge: two adjacent chips
+   then meet exactly in the middle of the 8px gap, touching with zero
+   overlap and zero gap. */
+.all-meals__count-chip--active::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  clip-path: inset(0 round var(--touch-target-radius));
 }
 
 .all-meals__count-chip-label {
@@ -228,7 +303,7 @@
 }
 
 .all-meals__count-chip--active {
-  background: var(--color-card);
+  background: var(--color-bg);
   border-color: var(--color-text);
   color: var(--color-text);
   border-radius: 999px;
@@ -238,13 +313,17 @@
 }
 
 .all-meals__count-chip--active:hover {
-  background: var(--color-card-hover);
-  border-color: var(--color-text-hover);
+  background: #fff;
+  border-color: var(--color-accent);
   color: var(--color-text-hover);
 }
 
+.all-meals__count-chip--active:hover .all-meals__count-chip-icon {
+  color: var(--color-text);
+}
+
 .all-meals__count-chip-mic-icon {
-  font-size: 13px;
+  font-size: 14px;
   vertical-align: -2px;
   margin-left: 2px;
   margin-right: 2px;
@@ -267,11 +346,23 @@
   color: var(--color-text);
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   text-transform: uppercase;
   text-decoration: underline;
   text-underline-offset: 2px;
   transition: color 0.15s ease;
+}
+
+/* Invisible touch target — see IconButton.css for the technique. Capped at
+   -4px to match .all-meals__count-chip--active's cap: it sits in the same
+   8px-gapped row, so this keeps its overlay touching (not overlapping) the
+   chip beside it. Height ends up 38px (30 + 4 + 4), short of 44 but
+   overlap-free — fine here since it's a text link, not a primary tap target. */
+.all-meals__count-clear::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  clip-path: inset(0 round var(--touch-target-radius));
 }
 
 .all-meals__count-clear:hover {
@@ -321,7 +412,7 @@
   color: var(--color-text-muted);
   font-family: var(--font-sans);
   font-weight: 900;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   padding: 6px 4px 0;
   margin-top: 4px;
   margin-bottom: -4.5px;
@@ -335,7 +426,7 @@
   align-items: center;
   justify-content: center;
   height: 54px;
-  padding: 0 20px 0 16px;
+  padding: 0 16px;
   border-radius: 999px;
   background: var(--color-accent);
   border: none;
@@ -364,7 +455,7 @@
 
 .all-meals__fab-label {
   position: relative;
-  top: 2px;
+  top: var(--btn-label-optical-nudge);
   margin-left: 8px;
   max-width: 200px;
   overflow: hidden;

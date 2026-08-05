@@ -16,7 +16,7 @@
   color: var(--color-text);
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   flex-shrink: 0;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
@@ -80,6 +80,7 @@
 }
 
 .filters-dropdown__clear {
+  position: relative;
   margin-top: 4px;
   padding: 8px;
   border: none;
@@ -91,6 +92,17 @@
   text-align: left;
   text-decoration: underline;
   transition: color 0.15s ease;
+}
+
+/* Invisible 44px-ish touch target — see IconButton.css for the technique.
+   Top is capped at -2px (not the full expansion) because only 4px of
+   margin-top separates this from the last checkbox row above; a fuller
+   overlay would start stealing taps meant for that option. */
+.filters-dropdown__clear::before {
+  content: '';
+  position: absolute;
+  inset: -2px -6px -8px -6px;
+  clip-path: inset(0 round var(--touch-target-radius));
 }
 
 .filters-dropdown__clear:hover {

@@ -56,6 +56,7 @@
 }
 
 .btn--text {
+  position: relative;
   background: transparent;
   border: none;
   color: var(--color-text);
@@ -65,10 +66,34 @@
   padding: 8px 4px;
 }
 
+/* Invisible 44px touch target — see IconButton.css for the technique. No
+   border here, so the padding box equals content+padding; this button's own
+   height varies with its font-size, so the inset is computed to reach 44px
+   off the *smallest* text-link size in the app (14px btn--text default) and
+   verified empirically for the 16px override .ob-step__skip uses. */
+.btn--text::before {
+  content: '';
+  position: absolute;
+  inset: -7px -4px;
+  clip-path: inset(0 round var(--touch-target-radius));
+}
+
 .btn--text:hover:not(:disabled) {
   color: var(--color-text-hover);
 }
 
 .btn--full {
   width: 100%;
+}
+
+.btn--sm {
+  height: 36px;
+  padding: 0 20px;
+  font-size: 12px;
+}
+
+.no-uppercase {
+  text-transform: none;
+  font-weight: 700;
+  letter-spacing: normal;
 }

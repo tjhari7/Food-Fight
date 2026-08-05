@@ -21,7 +21,7 @@
   border-radius: 12px;
   padding: 16px 14px 16px 18px;
   font-family: var(--font-sans);
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--color-text);
   text-align: left;
   text-decoration: none;
@@ -36,9 +36,24 @@
 
 .settings__item-label {
   font-weight: 500;
+  font-size: 1rem;
 }
 
 .settings__item-chevron {
   color: var(--color-text-muted);
   font-size: 22px;
+}
+
+.settings__item-trail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Screen count on the onboarding rows — the variant is the whole point of the
+   comparison, so it belongs on the row rather than only inside the flow. */
+.settings__item-count {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
 }

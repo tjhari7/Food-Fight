@@ -82,7 +82,7 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--color-accent);
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 .home__subtitle {
@@ -108,7 +108,7 @@
 
 .home__cta-label {
   position: relative;
-  top: 2px;
+  top: var(--btn-label-optical-nudge);
 }
 
 .home__actions > *:not(:last-child) {
@@ -183,7 +183,7 @@ button.home__mic-btn--active:hover {
   background: var(--color-text);
   color: var(--color-card);
   font-family: var(--font-sans);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
   line-height: 1.35;
   text-align: center;
@@ -226,6 +226,7 @@ button.home__mic-btn--active:hover {
 }
 
 .home__chip {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -234,18 +235,35 @@ button.home__mic-btn--active:hover {
   padding: 0 12px;
   border: 1px solid var(--color-text);
   border-radius: 999px;
-  background: var(--color-card);
+  background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
+/* Invisible touch target — see IconButton.css for the technique. Capped
+   (not the full -8px that would reach 44px) because .home__chip-row's gap is
+   only 8px. inset resolves against the padding box, and the 1px border eats
+   1px of *visual* reach on each side — so -5px (not -4px) is what actually
+   overhangs 4px past the visible edge: two adjacent chips then meet exactly
+   in the middle of the 8px gap, touching with zero overlap and zero gap. */
+.home__chip::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  clip-path: inset(0 round var(--touch-target-radius));
+}
+
 .home__chip:hover {
-  background: var(--color-card-hover);
-  border-color: var(--color-border-hover);
+  background: #fff;
+  border-color: var(--color-accent);
   color: var(--color-text-hover);
+}
+
+.home__chip:hover .home__chip-close {
+  color: var(--color-text);
 }
 
 .home__chip-icon {
@@ -279,7 +297,7 @@ button.home__mic-btn--active:hover {
   color: var(--color-text);
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   text-transform: uppercase;
   text-decoration: underline;
   text-underline-offset: 2px;
@@ -290,13 +308,36 @@ button.home__mic-btn--active:hover {
   color: var(--color-text-hover);
 }
 
+/* Invisible touch target — see IconButton.css for the technique. Capped at
+   -4px to match .home__chip's cap: it sits in the same 8px-gapped row, so
+   this keeps its overlay touching (not overlapping) the chip beside it.
+   Height ends up 38px (30 + 4 + 4), short of 44 but overlap-free — fine here
+   since it's a text link, not a primary tap target. */
+.home__chip-clear::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  clip-path: inset(0 round var(--touch-target-radius));
+}
+
 .home__link {
+  position: relative;
   text-align: center;
   color: var(--color-text);
   font-weight: 700;
   text-decoration: underline;
   padding: 8px;
   transition: color 0.15s ease;
+}
+
+/* Invisible 44px-ish touch target — see IconButton.css for the technique.
+   No border; height is font-driven (~35px with padding), so -6px is a close
+   approximation, verified empirically against the rendered page. */
+.home__link::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  clip-path: inset(0 round var(--touch-target-radius));
 }
 
 .home__link:hover {

@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useParams, useNavigate, useLocation, useViewTransitionState } from 'react-router-dom'
 import { useData } from '../context/DataContext.jsx'
 import { deleteMeal } from '../api/meals'
-import { getDisplayNumber } from '../lib/displayNumber'
 import { MEAL_MORPH_NAME, shouldMorph } from '../lib/morph'
 import { getNextWinnerHeadline } from '../lib/winnerHeadlines'
 import { useSwipeBackTo } from '../lib/swipeBack'
@@ -11,8 +10,10 @@ import BackHeader from '../components/BackHeader'
 import IconButton from '../components/IconButton'
 import ConfirmDialog from '../components/ConfirmDialog'
 import Card from '../components/Card'
+import Button from '../components/Button'
 import curveShape from '../assets/Curve_Shape.svg'
-import impactWinner from '../assets/Impact_Winner_Meal.svg'
+import impactWinner from '../assets/Impact_All_Meals_2.svg'
+import refreshIcon from '../assets/Icon_Refresh_Round.svg'
 import './MealDetail.css'
 
 export default function MealDetail() {
@@ -99,7 +100,6 @@ export default function MealDetail() {
     )
   }
 
-  const displayNumber = getDisplayNumber(meals, meal.id)
   const hasMacros = meal.protein_g != null || meal.carbs_g != null || meal.fats_g != null
   const calories = hasMacros
     ? calcCalories(meal.protein_g, meal.carbs_g, meal.fats_g)
@@ -222,7 +222,19 @@ export default function MealDetail() {
           </section>
         )}
 
-        <p className="detail__number">{displayNumber}</p>
+        {/* Rematch — the ingredient list is the first place the user learns
+            whether tonight's winner is actually cookable, so the way back to the
+            fight has to live *after* it rather than floating over it. Reuses
+            startBack(), the same handler the non-winner arrival from the main
+            event already uses, so the standing matchup (picks + exclusionIds,
+            carried in returnTo) comes back intact and the loser is still there
+            to crown instead. */}
+        {winnerHeadline && fromMainEvent && returnTo && (
+          <Button variant="secondary" className="btn--full detail__rematch" onClick={startBack}>
+            <img src={refreshIcon} alt="" className="detail__rematch-icon" />
+            <span className="detail__rematch-label">Rematch</span>
+          </Button>
+        )}
       </Card>
 
       <ConfirmDialog

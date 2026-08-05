@@ -19,12 +19,18 @@ export default function Settings() {
           <Icon name="chevron_right" className="settings__item-chevron" />
         </Link>
 
-        {/* Onboarding intentionally links nowhere yet — the destination page
-            doesn't exist. The row is a plain button with no handler. */}
-        <button type="button" className="settings__item">
-          <span className="settings__item-label">Onboarding</span>
+        {/* Two onboarding variants under test. Both are prototypes: they build
+            a roster in session state and write nothing, so either can be run
+            repeatedly without touching the real meal list. */}
+        <Link to="/onboarding/a" className="settings__item">
+          <span className="settings__item-label">Onboarding A</span>
           <Icon name="chevron_right" className="settings__item-chevron" />
-        </button>
+        </Link>
+
+        <Link to="/onboarding/b" className="settings__item">
+          <span className="settings__item-label">Onboarding B</span>
+          <Icon name="chevron_right" className="settings__item-chevron" />
+        </Link>
       </nav>
     </div>
   )

@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Gliker';
-  src: url('./assets/fonts/Gliker-Bold.ttf') format('truetype');
+  src: url('/fonts/Gliker-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -8,7 +8,18 @@
 
 @font-face {
   font-family: 'Gliker Black';
-  src: url('./assets/Gliker/Gliker Black.ttf') format('truetype');
+  src: url('/fonts/Gliker-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Figma's "Button Primary" style — the wider Black cut the onboarding CTAs use.
+   Distinct from 'Gliker Black' above, which the design still uses for New Round,
+   the success headline, and the paywall prices. */
+@font-face {
+  font-family: 'Gliker Black Semi Expanded';
+  src: url('/fonts/Gliker-BlackSemiExpanded.woff2') format('woff2');
   font-weight: 900;
   font-style: normal;
   font-display: swap;
@@ -16,7 +27,7 @@
 
 @font-face {
   font-family: 'Gliker Black Extra Expanded';
-  src: url('./assets/fonts/Gliker-Black-ExtraExpanded.ttf') format('truetype');
+  src: url('/fonts/Gliker-BlackExtraExpanded.woff2') format('woff2');
   font-weight: 900;
   font-style: normal;
   font-display: swap;
@@ -24,7 +35,7 @@
 
 @font-face {
   font-family: 'Gliker Regular Semi Condensed';
-  src: url('./assets/fonts/Gliker-Regular-SemiCondensed.ttf') format('truetype');
+  src: url('/fonts/Gliker-RegularSemiCondensed.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -32,7 +43,7 @@
 
 @font-face {
   font-family: 'Gliker Regular Condensed';
-  src: url('./assets/fonts/Gliker-Regular-Condensed.ttf') format('truetype');
+  src: url('/fonts/Gliker-RegularCondensed.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -40,7 +51,7 @@
 
 @font-face {
   font-family: 'Gliker Bold Semi Condensed';
-  src: url('./assets/fonts/Gliker-Bold-SemiCondensed.ttf') format('truetype');
+  src: url('/fonts/Gliker-BoldSemiCondensed.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -48,7 +59,7 @@
 
 @font-face {
   font-family: 'Gliker Semi Bold';
-  src: url('./assets/fonts/Gliker-SemiBold.ttf') format('truetype');
+  src: url('/fonts/Gliker-SemiBold.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -56,7 +67,7 @@
 
 @font-face {
   font-family: 'Gliker Regular';
-  src: url('./assets/fonts/Gliker-Regular.ttf') format('truetype');
+  src: url('/fonts/Gliker-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -76,15 +87,42 @@
   --color-card-hover: #FBF7EC;
   --color-border: rgba(55, 49, 44, 0.1);
   --color-border-hover: rgba(122, 92, 56, 0.28);
+  /* For the visual boundary of interactive controls (inputs, secondary
+     buttons), which WCAG 1.4.11 holds to 3:1 — --color-border is a decorative
+     hairline for cards and lands at 1.13:1 against the page, well under it.
+     0.55 is the alpha where this clears the bar: 3.07:1 over --color-card,
+     3.02:1 over white. */
+  --color-border-strong: rgba(55, 49, 44, 0.55);
   --color-text: #37312C;
   --color-text-hover: #504943;
   --color-text-muted: #514C46;
   --color-text-muted-hover: #7D756B;
   --color-accent: #DF2121;
   --color-accent-hover: #F74040;
+  /* --color-accent is 4.43:1 on the page — fine as a 3:1 focus ring or a
+     large-text fill, but under the 4.5:1 body-text bar, so error copy gets its
+     own darker cut at 5.56:1. */
+  --color-error-text: #C41818;
 
   --font-serif: 'Instrument Serif', serif;
   --font-sans: 'DM Sans', sans-serif;
+
+  /* Optical centering nudge for the uppercase Gliker Black 24px labels on the
+     three big pill buttons (Find Your Meal, Add Meal, New Round). Flexbox
+     centers the LINE BOX, but the font reserves more space below the baseline
+     than these all-caps strings ever use, so the glyph ink lands 0.64px below
+     true center. Measured with canvas actualBoundingBoxAscent/Descent against a
+     baseline-marker span, after `document.fonts.ready`, on the UPPERCASE string
+     that's actually rendered — measuring the mixed-case source text instead
+     picks up the descender in "Your" and yields a badly wrong number.
+     Re-measure if the font, size, or button height changes. */
+  --btn-label-optical-nudge: -0.64px;
+
+  /* Corner radius for the invisible 44px touch-target overlays added to
+     controls smaller than that (see components/IconButton.css and others).
+     Deliberately a soft rounded rect, not a circle/pill, per design direction
+     — the overlay's shape doesn't need to match the control's own shape. */
+  --touch-target-radius: 12px;
 }
 
 * {

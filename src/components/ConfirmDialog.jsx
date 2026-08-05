@@ -6,6 +6,7 @@ export default function ConfirmDialog({
   title,
   message,
   confirmLabel = 'Delete',
+  cancelLabel = 'Cancel',
   onConfirm,
   onCancel,
 }) {
@@ -18,7 +19,7 @@ export default function ConfirmDialog({
         <p className="confirm-message">{message}</p>
         <div className="confirm-actions">
           <Button variant="secondary" onClick={onCancel}>
-            Cancel
+            {cancelLabel}
           </Button>
           <Button variant="primary" onClick={onConfirm}>
             {confirmLabel}

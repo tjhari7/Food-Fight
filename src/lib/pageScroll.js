@@ -22,9 +22,29 @@ export function getScrollTop(scroller = getPageScroller()) {
   return scroller === window ? window.scrollY : scroller.scrollTop
 }
 
-export function scrollPageTo(top, scroller = getPageScroller()) {
-  if (scroller === window) window.scrollTo(0, top)
-  else scroller.scrollTop = top
+export function scrollPageTo(top, scroller = getPageScroller(), { smooth = false, duration = 500 } = {}) {
+  if (!smooth) {
+    if (scroller === window) window.scrollTo(0, top)
+    else scroller.scrollTop = top
+    return
+  }
+
+  const start = getScrollTop(scroller)
+  const distance = top - start
+  if (distance === 0) return
+
+  const startTime = performance.now()
+  const easeOut = t => 1 - Math.pow(1 - t, 3)
+
+  function step(now) {
+    const t = Math.min((now - startTime) / duration, 1)
+    const value = start + distance * easeOut(t)
+    if (scroller === window) window.scrollTo(0, value)
+    else scroller.scrollTop = value
+    if (t < 1) requestAnimationFrame(step)
+  }
+
+  requestAnimationFrame(step)
 }
 
 // How far the scroller must move for `el` to reach the top of the visible area

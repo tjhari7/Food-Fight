@@ -38,7 +38,7 @@
   font-weight: 600;
   font-size: 1.5rem;
   color: var(--color-text);
-  margin: 8px 0 8px;
+  margin: 4px 0 8px;
   line-height: 1.15;
   letter-spacing: 0.5px;
 }
@@ -79,4 +79,112 @@
   right: 8px;
   display: flex;
   gap: 4px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Swipe-to-delete (All Meals list only)
+ *
+ * The delete button is parked under the card's trailing edge and uncovered as
+ * the card is dragged left — no layout change, just a transform, so the list
+ * around it never reflows.
+ * ------------------------------------------------------------------ */
+.meal-card-swipe {
+  position: relative;
+  /* Hands vertical drags straight to the scroller (which cancels our pointer
+     gesture) while keeping horizontal ones for the swipe. */
+  touch-action: pan-y;
+}
+
+.meal-card-swipe .meal-card--list {
+  position: relative;
+  z-index: 1;
+  /* The card movement the spec asks for. Dropped mid-drag so the card tracks
+     the finger 1:1 instead of lagging 300ms behind it. */
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+    background-color 0.15s ease, border-color 0.15s ease;
+  will-change: transform;
+}
+
+.meal-card-swipe .meal-card--list.meal-card--dragging {
+  transition: none;
+}
+
+.meal-card-swipe__delete {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  z-index: 0;
+  transform: translateY(-50%);
+  width: 54px;
+  height: 54px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  /* Opacity is set inline from the drag progress; this only smooths the settle
+     at each end of the gesture. */
+  transition: opacity 0.3s ease, background-color 0.15s ease;
+}
+
+.meal-card-swipe__delete--dragging {
+  transition: background-color 0.15s ease;
+}
+
+/* Not a tap target until the card is actually out of the way — while closed it
+   sits underneath and must not steal the card's own taps. */
+.meal-card-swipe__delete[aria-hidden='true'] {
+  pointer-events: none;
+}
+
+.meal-card-swipe__delete:hover {
+  background: var(--color-accent-hover);
+}
+
+.meal-card-swipe__delete-icon {
+  font-size: 24px;
+  font-variation-settings: 'FILL' 1;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meal-card-swipe .meal-card--list,
+  .meal-card-swipe__delete {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Selected contender — the host's pick during a group decision.
+ *
+ * Reuses the red the hover state already applies, so choosing a card reads
+ * as the hover committing rather than as a new colour arriving on the page.
+ * The card keeps its normal default and hover behaviour otherwise; only the
+ * chevron is replaced, by a filled check (see ResultMealCard).
+ *
+ * Both selectors are deliberately doubled up to (0,2,0). The properties they
+ * override — `border` from .card in Card.css, `color` from .meal-card__chevron
+ * above — are single-class rules that land later in the built stylesheet, so a
+ * (0,1,0) rule here loses on source order. This is not stylistic; the plain
+ * single-class version of these two rules silently does nothing.
+ * ------------------------------------------------------------------ */
+.meal-card.meal-card--selected {
+  border-color: var(--color-accent);
+  background: #FFFFFF;
+}
+
+.meal-card__chevron.meal-card__chevron--selected {
+  color: var(--color-accent);
+  /* Solid cut — same variable-font FILL axis the group icon uses; see
+     IconButton.css. */
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  /* 12px where the chevron sits at 6px. Not an inconsistency: chevron_right is
+     a thin glyph carrying its own whitespace inside the 24px box, while a
+     filled check_circle is a solid disc that reaches the box edge — at a
+     shared inset the circle reads as noticeably closer to the card edge. The
+     extra 6px cancels that difference optically. */
+  right: 12px;
 }

@@ -1,0 +1,1519 @@
+/* Shared chrome and step layout for both onboarding variants. Individual steps
+   lean on the app's existing page styles (Home, FindMealResults, MealDetail)
+   wherever they're mirroring a real screen — the point of the prototype is that
+   it looks like the app, not like a wireframe. */
+
+/* min-height, not a fixed height: the chrome and step now scroll together as
+   one column instead of the chrome staying pinned above an internally
+   scrolling step. */
+/* Horizontal padding lives on the children, not here, and there's no bottom
+   padding at all: the Figma frames put a full-bleed cream shelf under the
+   primary button (see .ob-step__actions--shelf), and it has to reach the side
+   and bottom edges of the frame. Everything that isn't the shelf re-adds the
+   16px inset itself. */
+.onboarding {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 0 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Inside the desktop phone frame the available height is the frame's, not the
+   window's — mirrors the `.device-frame .page` override in index.css. */
+@media (min-width: 601px) {
+  .device-frame .onboarding {
+    min-height: 100%;
+  }
+}
+
+.onboarding__chrome {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 36px;
+  margin-bottom: 24px;
+  padding: 0 16px;
+  background: transparent;
+}
+
+/* The fight screens (Main Event, Champion) sit closer under the chrome than
+   the form screens' 24px breather — see .ob-step--flush above. */
+.onboarding__chrome--flush {
+  margin-bottom: 8px;
+}
+
+/* Mirrors the 48px filter button on All Meals (.all-meals__filter-btn) down to
+   the card/border/muted-icon treatment, so it reads as the same control
+   language. Fixed rather than sticky: it has to float above whichever step is
+   showing, not scroll with one particular step's content. Fixed resolves
+   against .device-frame on desktop (that box is its own containing block —
+   see the transform note on .device-frame in index.css) and the viewport on
+   phone, which is exactly where the FAB and A–Z index already anchor, so this
+   stays put the same way those do.
+   `bottom` is set inline per-step (JS measures the actions block's height so
+   this clears the shelf/on-panel bar without hardcoding a number that would
+   drift the moment button copy or a caption row changes that height).
+   Hidden via opacity/pointer-events rather than unmounted — visibility is
+   driven by whether the back chevron has scrolled out of view (see
+   Onboarding.jsx), and toggling those instead of display keeps the
+   appear/disappear a transition instead of a pop. */
+.onboarding__to-top {
+  position: fixed;
+  left: 50%;
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-card);
+  border: 1px solid var(--color-text);
+  color: var(--color-text-muted);
+  transform: translate(-50%, 8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.onboarding__to-top--visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.onboarding__to-top:hover {
+  background: #FFFFFF;
+  border-color: var(--color-accent);
+}
+
+.onboarding__progress {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+
+/* Variant B has no exit button, but the design keeps the gutter it used to sit
+   in — the bar runs 247 of the 343pt content width and stops short of the right
+   edge. Reserving the space rather than letting the bar stretch is what makes
+   the chrome read the same in both variants. */
+.onboarding__chrome--no-exit .onboarding__progress {
+  margin-right: 48px;
+}
+
+/* Identical in both variants on purpose: if A showed progress and B didn't,
+   a user test couldn't tell flow length apart from indicator presence. */
+.onboarding__progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-accent);
+  transition: width 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.onboarding__step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  animation: onboarding-step-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes onboarding-step-in {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+  to {
+    opacity: 1;
+    translate: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onboarding__step {
+    animation: none;
+  }
+
+  .onboarding__progress-fill {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------- *
+ * Step scaffolding shared across screens
+ * ---------------------------------------------------------------- */
+
+.ob-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /* The frame's 16pt content inset. Held here rather than on .onboarding so the
+     shelf can bleed back out to the frame edges with a negative margin. */
+  padding: 0 16px;
+}
+
+/* For steps whose own content scrolls internally (the roster list) rather than
+   scrolling the whole step. Without min-height:0 this box grows to fit its
+   flex:1 child, overflows .onboarding__step, and carries the CTA below the fold.
+   Deliberately opt-in: the form steps want the opposite — full-height content
+   with the whole step scrolling. */
+.ob-step--fill {
+  min-height: 0;
+}
+
+/* The two fight screens run their art close under the chrome (8px, vs. the
+   form screens' 24px breather) and butt straight up against the shelf. Set on
+   the chrome itself (.onboarding__chrome--flush, applied in Onboarding.jsx)
+   rather than pulled up with a negative margin on the content side: the step
+   content sits inside .onboarding__step, which scrolls (overflow-y: auto), and
+   a negative margin on its first child renders above that box's own top edge —
+   invisible and unscrollable-to, silently cropping the hero art. */
+.ob-step--flush {
+  gap: 0;
+  /* Like .ob-step--fill: without this the box grows to its content instead of
+     being squeezed, and nothing inside it is ever asked to shrink — the hero
+     art's flex-shrink below would never fire. */
+  min-height: 0;
+}
+
+/* Figma B-4 through B-7 (prebuilt meals, voice, account, paywall) widen the
+   step's own inset to 24px — .ob-step__head and whatever sits between it and
+   the shelf all move in with it. The chrome above and the shelf's curve/CTA/
+   skip link stay at the original 16px: the shelf's negative margin has to
+   widen to match so it still bleeds out to the true frame edge before
+   re-insetting by its own unchanged 16px. */
+.ob-step--inset-24 {
+  padding-inline: 24px;
+}
+
+.ob-step--inset-24 > .ob-step__actions--shelf {
+  margin-inline: -24px;
+}
+
+.ob-step__head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* The workaday screen heading — voice, account, paywall. Sentence-cased and
+   left-aligned, in Semi Bold rather than Black: in the design the shouty red
+   Black cut is reserved for the three moments that are actually a fight (see
+   .ob-step__display, .results__title, .detail__winner-title). */
+.ob-step__title {
+  font-family: 'Gliker Semi Bold', var(--font-sans);
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 28.12px;
+  letter-spacing: -0.296px;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+
+/* The title-card treatment: FOOD FIGHT on the opening frame. */
+.ob-step__display {
+  font-family: 'Gliker Black Extra Expanded', var(--font-sans);
+  font-weight: 900;
+  font-size: 60px;
+  line-height: 52px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  text-align: center;
+}
+
+.ob-step__body {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-text-muted);
+}
+
+/* The opening frame centers its body copy and darkens it — it's the pitch, not
+   a caption under a heading. */
+.ob-step__body--center {
+  text-align: center;
+  line-height: 25px;
+  color: var(--color-text);
+}
+
+/* Looks disabled without being disabled: matches .btn:disabled's opacity so
+   the button visually reads as "not ready yet", but deliberately doesn't use
+   the disabled attribute or its not-allowed cursor — the button stays clickable
+   so tapping it while a field is invalid still surfaces that field's error
+   text instead of doing nothing (see Account.jsx's canContinue). */
+.ob-step__cta--inactive {
+  opacity: 0.5;
+}
+
+/* Pushes the action block to the bottom of the step regardless of content
+   height, so the primary button lands in the same place on every screen. */
+.ob-step__actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 24px;
+  padding-bottom: 16px;
+}
+
+/* The cream shelf the primary button sits on. It bleeds back out through
+   .ob-step's inset to the frame edges and runs to the bottom of the screen —
+   which is why .onboarding carries no bottom padding. The dome above it is the
+   same Curve_Shape the winner panel uses, so the two screens share one curve. */
+.ob-step__actions--shelf {
+  position: relative;
+  margin-inline: -16px;
+  padding-inline: 16px;
+  /* The dome is part of the shelf, not something stacked on top of it: the
+     frame measures its offsets from the top of the arc. A transparent top
+     border reserves the arc's 32px inside the box — background-clip keeps the
+     fill below it, and the dome image sits in the border band. Offsets below
+     are therefore what's left after the arc's own 32px. */
+  border-top: 32px solid transparent;
+  background: var(--color-card);
+  background-clip: padding-box;
+  padding-top: 16px;
+}
+
+.ob-step__actions--shelf:has(.ob-step__caption) {
+  padding-top: 0;
+}
+
+/* Drops the dome 8px lower without moving the button. The band the arc sits in
+   grows by 8 and the padding under it shrinks by the same 8, so the fill's top
+   edge — and therefore the CTA and everything below it — lands exactly where it
+   did; only the arc, drawn against the bottom of the band by .ob-step__curve's
+   unchanged -32px, slides down into the space. Opt-in per screen: the two fight
+   frames (Main Event, Champion) keep the original 32px arc. */
+.ob-step__actions--shelf-low {
+  border-top-width: 40px;
+  padding-top: 8px;
+}
+
+/* Pinned to the viewport bottom rather than left in normal flow: the page now
+   scrolls as one column (chrome included — see .onboarding__step above), and a
+   full winner record (macros, ingredients) routinely runs past one screen, so
+   without this Continue/Rematch would scroll out of reach along with it.
+
+   Deliberately does NOT re-clip to border-box: the arc band stays transparent
+   here exactly as it does on every other shelf, so the winner panel shows
+   through above the dome and only the dome's own fill covers content. Filling
+   the band squared off the top of the shelf, which cut the ingredient list a
+   flat 32px above the curve instead of letting the curve do the cutting. The
+   32px of page cream this used to hide is handled on .ob-champion__panel
+   instead, by running the panel's own fill down under the band. */
+.ob-step__actions--on-panel {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+}
+
+.ob-step__curve {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -32px;
+  width: 100%;
+  height: 32px;
+  /* Stretches the 375-wide arc to whatever the column is, rather than scaling
+     it taller — a proportional dome would swallow the content on wide frames. */
+  object-fit: fill;
+  display: block;
+  pointer-events: none;
+  /* So the elevation below can fade in on the shelves that switch it on mid-step
+     (PrebuiltMeals, when the roster expands) instead of popping. Inert
+     everywhere else: no other screen changes the curve's filter. */
+  transition: filter 200ms ease;
+}
+
+/* Elevation, opted into per shelf via --shelf-elevated (Champion always;
+   PrebuiltMeals only once its roster is expanded and actually scrolling under
+   the lip) rather than tied to --on-panel/--sticky-shelf, which are about
+   pinning the bar to the viewport, not about this shadow. A box-shadow on --shelf itself
+   would draw a flat rectangle that misses the arc's dip at the sides — wrong
+   shape against a curved lip. filter: drop-shadow instead follows the dome
+   image's own alpha silhouette, so the shadow traces the curve and reads as
+   the shelf lifting off the content behind it. */
+.ob-step__actions--shelf-elevated .ob-step__curve {
+  filter: drop-shadow(0 -2px 8px rgba(55, 49, 44, 0.16));
+}
+
+/* drop-shadow casts a shadow from every alpha edge of the curve image —
+   including the artificial one at its own bottom, where the 32px image box
+   is cropped off (the dome's fill actually runs solid well past that; see
+   Curve_Shape.svg). That edge isn't part of the visible shape, but it still
+   sheds a shadow, which bleeds onto the shelf fill right behind the caption.
+   A same-color strip painted over just that seam — after the img, before the
+   caption/CTA in DOM order, so it repaints over the img but sits underneath
+   them wherever it overlaps — covers the bleed without touching the real
+   shadow above the arc.
+
+   top must stay at 0, never negative: the arc dips to within ~2px of the
+   image's own bottom edge at the frame's left/right corners (the path hits
+   y≈30 of 32 there — see Curve_Shape.svg), so any upward reach paints over
+   the real curve stroke exactly where it's most visible, flattening the dip
+   instead of just covering the seam below it. */
+.ob-step__curve-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 16px;
+  background: var(--color-card);
+  pointer-events: none;
+}
+
+/* Sits 20px below the top of the arc — i.e. 12px up inside the band the shelf's
+   border reserves. `position: relative` puts it in the same paint layer as the
+   dome image, which is absolutely positioned and would otherwise cover it. */
+.ob-step__caption {
+  position: relative;
+  font-size: 16px;
+  line-height: 25px;
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 320px;
+  margin: -12px auto 0;
+}
+
+/* The pill is a fixed 54px, but a flex item's `min-height: auto` lets a wrapped
+   label push it taller and deform it. The Semi Expanded cut is wide enough that
+   this is a real risk — it fits roughly 12 uppercase characters across the 343px
+   button — so labels are kept on one line and must be kept short. */
+.ob-step__cta {
+  /* No offset — this is purely to promote the button into the "positioned"
+     paint layer. Static boxes always paint below positioned ones in CSS
+     stacking order regardless of DOM order, so on a shelf with no caption
+     between it and .ob-step__curve-mask (PrebuiltMeals; Champion's caption
+     covers the gap), the mask — despite coming first in the DOM — was
+     painting over the button's top edge, slicing a flat cream bar across it. */
+  position: relative;
+  height: 54px;
+  font-family: 'Gliker Black Semi Expanded', var(--font-sans);
+  font-size: 24px;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.ob-step__cta > span {
+  display: block;
+  margin-top: var(--btn-label-optical-nudge);
+}
+
+/* Champion's Rematch, matching .detail__rematch on the real winner view and
+   .results__reroll, the New Round button it hands back to — identical icon
+   size, font size, and button height. The shared sticky shelf grows by the
+   same 6px this adds over the old 48px, and since .ob-step__curve is
+   positioned relative to this box's own top edge, the arc rides up with it
+   automatically; no separate offset to maintain. */
+.ob-champion__rematch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 54px;
+  font-family: 'Gliker Black', var(--font-sans);
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+
+.ob-champion__rematch-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.ob-champion__rematch-label {
+  position: relative;
+  top: var(--btn-label-optical-nudge);
+}
+
+/* "Skip for now" — Figma's Text Link Medium. */
+.ob-step__skip {
+  align-self: center;
+  font-size: 16px;
+  text-decoration: underline;
+  text-underline-position: from-font;
+}
+
+/* ---------------------------------------------------------------- *
+ * Opening frame
+ * ---------------------------------------------------------------- */
+
+/* The frame pins this block at a fixed offset; centering it in the space
+   between the chrome and the shelf lands within a few points of that on a
+   375x812 screen and survives every other screen height. */
+.ob-intro {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 327px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.ob-intro__art {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+}
+
+/* ---------------------------------------------------------------- *
+ * Starter pack
+ * ---------------------------------------------------------------- */
+
+.ob-starter__preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Same card as the two fighters on the Main Event — these are previews of the
+   very meals that screen will pit against each other, so they use its stroke,
+   radius and type rather than a lighter list treatment. */
+.ob-starter__card {
+  background: var(--color-card);
+  border: 1px solid var(--color-text);
+  border-radius: 16px;
+  padding: 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ob-starter__card-title {
+  font-family: 'Gliker Semi Bold', var(--font-sans);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 27.6px;
+  letter-spacing: 0.5px;
+}
+
+.ob-starter__more {
+  font-size: 16px;
+  line-height: 25px;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding-top: 4px;
+}
+
+/* ---------------------------------------------------------------- *
+ * Prebuilt meals reveal (variant B only — Figma B-4)
+ * ---------------------------------------------------------------- */
+
+.ob-prebuilt__list {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Opted into once "Load All N Meals" swaps the five-title taste for the full
+   roster — same trick as .ob-roster__list, so thirty-odd rows scroll inside
+   the step instead of pushing the CTA off-screen. */
+.ob-prebuilt__list--scroll {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 2px;
+  scrollbar-width: none;
+}
+
+.ob-prebuilt__list--scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Collapsed, the screen has to fit the viewport exactly — there is nothing below
+   the burger to scroll to, so even a few pixels of overflow read as a broken
+   page that jiggles. .ob-step's 20px row-gap lands under the art and is what
+   pushes it over, so it gets cancelled here.
+
+   Costs nothing visually: the shelf is positioned by .ob-step__actions's
+   `margin-top: auto`, which absorbs the free space and pins it to the bottom
+   either way. Only the forced minimum goes — the burger keeps its position and
+   its distance to the curve. Collapsed only, because once the roster is
+   expanded the page is supposed to scroll. */
+.ob-prebuilt__list:not(.ob-prebuilt__list--scroll) {
+  margin-bottom: -20px;
+}
+
+/* .onboarding__step doesn't actually cap its own height (it grows with
+   content, and the page scrolls as one column), so .ob-step--fill's
+   min-height:0 never gets a bounded box to shrink into and the list never
+   scrolls internally — the shelf just gets carried down with it instead.
+   Sticking the shelf to the viewport bottom, the same trick
+   .ob-step__actions--on-panel uses, keeps curve/CTA in place regardless.
+
+   --sticky-shelf is the same behaviour asked for unconditionally: the prebuilt
+   step only turns --fill on once "Load All" expands the roster, but its
+   collapsed state already runs past the fold (five rows, the link and the art),
+   so the shelf has to be pinned in both states, not just the scrolling one. */
+.ob-step--fill > .ob-step__actions--shelf,
+.ob-step--sticky-shelf > .ob-step__actions--shelf {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+}
+
+/* Collapsed peek: the 3 rows plus the gradient that fades the last one out.
+   Positioned so the button can float on top via absolute positioning. */
+.ob-prebuilt__peek {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+/* Sits exactly over the third row (Figma B-4's "Rectangle 8" — same bounds
+   as the row it covers) so the row fades top-to-bottom into --color-bg, the
+   page background this step sits on. */
+.ob-prebuilt__fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 58px;
+  background: linear-gradient(to bottom, transparent, var(--color-bg));
+  pointer-events: none;
+}
+
+/* Overlaps the faded third row instead of clearing it: the pill is pulled up so
+   its top half covers the row the gradient cuts off, which is what makes the
+   cutoff read as "more underneath" rather than as a list that just stops.
+   -12px against the list's own 8px gap laps the pill over the row's bottom edge
+   — expressed as a pull off the peek's real bottom rather than a hardcoded
+   offset, so it tracks row height if the type or padding changes.
+   z-index keeps it over .ob-prebuilt__fade, which paints the gradient.
+
+   It used to be absolute with a bottom offset, but that anchors to the list's
+   bottom edge, which *is* the art's bottom edge — so any change to the art
+   dragged the pill along with it. Staying in flow decouples the two. */
+.ob-prebuilt__view-all {
+  position: relative;
+  z-index: 2;
+  margin-top: -12px;
+}
+
+/* Hover: a 1px accent-red hairline in place of .btn--secondary's 2.5px thickening,
+   keeping that rule's white fill. Scoped to this pill rather than changed on
+   .btn--secondary itself, which would restyle every secondary button in the app
+   (New Round, Rematch, and the rest). Doubling up the class beats
+   .btn--secondary:hover's specificity regardless of stylesheet order. */
+.ob-prebuilt__view-all.btn--secondary:hover:not(:disabled) {
+  border-width: 1px;
+  border-color: var(--color-accent);
+}
+
+/* Sizing overrides .btn--sm locally rather than editing that shared class —
+   36px/12px is still right everywhere else it's used. */
+.ob-prebuilt__view-all.btn--sm {
+  height: 48px;
+  font-size: 14px;
+}
+
+/* Outline only, no fill: everywhere else in the app a card-filled row is a
+   tappable thing (MealCard, the roster rows, All Meals), and these thirty are
+   a read-only reveal. Dropping the fill keeps the shape without promising a
+   tap that isn't there. */
+.ob-prebuilt__row {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 17px;
+}
+
+/* The cascade "View All" runs down rows 4-30. Each row's own delay is set inline
+   in PrebuiltMeals.jsx, which is also where the 4-and-up cutoff is decided.
+
+   `both` is load-bearing: without the backwards fill, every row paints at full
+   opacity first and only then jumps to the from-state when its delay elapses, so
+   the whole roster flashes in solid before cascading. Rising 8px rather than the
+   step-in's 12px — that one moves a whole screen, this is a row falling the last
+   sliver into a slot, and the shorter throw keeps 27 of them from reading as a
+   lurch. */
+.ob-prebuilt__row--reveal {
+  animation: ob-prebuilt-row-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes ob-prebuilt-row-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0;
+  }
+}
+
+/* Reveal is the point of the tap, so the rows still have to arrive — only the
+   motion goes. animation:none drops the fill too, which lands them at their
+   natural opacity/position rather than stuck at the from-state. */
+@media (prefers-reduced-motion: reduce) {
+  .ob-prebuilt__row--reveal {
+    animation: none;
+  }
+}
+
+.ob-prebuilt__row-number {
+  font-family: 'Gliker Semi Bold', var(--font-sans);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+.ob-prebuilt__row-title {
+  font-family: 'Gliker Semi Bold', var(--font-sans);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* The frame's 343pt art. Capped to the column because this step runs a 24px
+   inset (327pt of room on a 375 screen) and, once expanded, the list is an
+   overflow-y:auto box — a literal 343 would bleed 8pt a side straight into a
+   horizontal scrollbar. flex-shrink:0 keeps the scroll container from squashing
+   it in place of scrolling. The 8px above the art is .ob-prebuilt__list's own
+   gap; the margin is on top of that, and is what fixes the art's position on
+   the page. Deliberately a margin and not `position: absolute`: the art is
+   the tallest thing in the collapsed list, so taking it out of flow collapses
+   the list by ~260px and the sticky CTA shelf — which sits at its flow position
+   at this height, not pinned — rides up and lands *above* the burger. */
+.ob-prebuilt__art {
+  width: 343px;
+  max-width: 100%;
+  height: auto;
+  flex-shrink: 0;
+  display: block;
+  pointer-events: none;
+  margin-top: 24px;
+}
+
+/* ---------------------------------------------------------------- *
+ * Voice
+ * ---------------------------------------------------------------- */
+
+/* The containing block .ob-voice__mic-group hangs off — see its own note. Its
+   bottom padding edge is the shelf's bottom edge, which is the frame's, so the
+   group's `bottom` offset is measured from the same place the design measures
+   it from. Kept as a step modifier rather than put on .ob-step itself: no
+   other screen needs it, and making every step a containing block would
+   silently re-parent any absolute descendant they add later. */
+.ob-step--voice {
+  position: relative;
+}
+
+.ob-voice__stage {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: center;
+  /* Takes the room between the heading and the shelf and centers the mascot
+     in it. Doesn't need to account for the mic group below — that's
+     position: fixed now (see .ob-voice__mic-group) — but still reserves
+     clearance at the bottom so the mascot's own centering doesn't run under it.
+
+     92px, and a constant rather than something measured, because the shelf's
+     height cancels out of the arithmetic entirely. This box's bottom edge sits
+     20px above the shelf (.ob-step's row-gap); the arc's top edge sits 8px
+     below it (the arc is drawn inside the shelf's 40px transparent top border
+     — see .ob-step__actions--shelf-low); and the mic group is pinned 24px above
+     that arc with 96px of its own to fit. So the group's top always lands
+     96 + 24 - 28 = 92px above this edge, whatever the shelf measures.
+
+     Was 140px, which overran the 812pt frame by 27px — that overflow, not the
+     content, was what made the empty state scroll. */
+  flex: 1;
+  justify-content: center;
+  min-height: 0;
+  padding-bottom: 92px;
+}
+
+/* The pizza's line, pointing down at it. Figma "Dark Beige" for the stroke —
+   the only place in the flow that uses it. */
+.ob-voice__bubble {
+  background: var(--color-card);
+  border: 1px solid #e3ded1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--color-text);
+}
+
+.ob-voice__bubble-tail {
+  display: block;
+  width: 23px;
+  height: 15.26px;
+  /* Overlaps the bubble's bottom border so the tail reads as part of it. */
+  margin-top: -4px;
+}
+
+.ob-voice__mascot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The frame overlaps the art box 27px up into the tail — the PNG carries a wide
+   transparent margin, so without the overlap the tail points at empty space
+   well above the crust. */
+.ob-voice__pizza {
+  display: block;
+  width: 280px;
+  max-width: 100%;
+  height: auto;
+  margin-top: -27px;
+}
+
+/* Taken out of .ob-voice__stage's flow rather than left as a child of it: the
+   stage's own content (mascot, then chips once meals start landing) changes
+   height, so a flex-centered button would sit somewhere different in every
+   state. Positioned instead against the step's own bottom edge — which is the
+   shelf's bottom edge — by a JS-measured offset (see VoiceAdd.jsx), so it
+   holds one position above the arc through all of them.
+
+   Anchored to .ob-step (which .ob-step--voice makes the containing block)
+   rather than the viewport, which is what gives the two behaviours asked for
+   at once: while the step fits, nothing scrolls and the button doesn't move;
+   once enough chips accumulate to outgrow the frame, the button is pushed down
+   with the rest of the column and scrolled to, instead of floating over it.
+   It reads as absolutely positioned either way — the difference only shows up
+   past the fold. (It used to be position: fixed, which happened to behave this
+   way anyway: .onboarding__step's step-in animation leaves `translate: 0`
+   behind under fill-mode `both`, and that alone makes it the containing block
+   for fixed descendants. But that animation is switched off under
+   prefers-reduced-motion, so the anchor silently changed with the user's
+   motion setting.)
+
+   Spans the full frame width rather than shrink-wrapping the mic, so the
+   status line hanging off it has a column to wrap inside — as a shrink-wrapped
+   flex item it would run off both edges on a long transcript. That makes the
+   box a full-width band, hence pointer-events: none, with the button opting
+   back in: nothing but the button should be catching taps up here.
+
+   z-index 1, matching the shelf rather than beating it: on the same level the
+   shelf wins on source order, so when a long roster does push this down the
+   button slides under the shelf instead of over the CTA. */
+.ob-voice__mic-group {
+  position: absolute;
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Lives with the button now, not in the shelf's curve band — see the JSX
+   comment. Same type treatment .ob-step__caption used, minus the negative
+   margin that pulled it up into the arc.
+
+   Positioned out of the group's flow, which is what holds the button still:
+   the group is anchored by its bottom edge, so with the status inside it every
+   change of wording — resting to recording to "add more meals", and every
+   frame of a streaming transcript — re-measured the box and slid the button up
+   or down. Now the group's box is only the 64px button, and the text hangs
+   below it from a fixed top; VoiceAdd.jsx's STATUS_RESERVE is the 8 + 24 this
+   occupies, so the 24px above the arc is still measured from the text. The
+   inset matches .ob-step--inset-24's own. */
+.ob-voice__status {
+  position: absolute;
+  top: 100%;
+  left: 24px;
+  right: 24px;
+  margin-top: 8px;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.ob-voice__mic {
+  /* Back in, against the group's blanket pointer-events: none. */
+  pointer-events: auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 100px;
+  border: 2px solid var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.ob-voice__mic .material-symbols-outlined {
+  font-size: 32px;
+}
+
+/* Inverted like the active state's hover (white fill, red stroke, dark icon):
+   the base state is now solid red too, so without setting `color` here the
+   white icon would carry over onto its own white hover fill and vanish. */
+.ob-voice__mic:hover:not(:disabled) {
+  background: #fff;
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.ob-voice__mic--active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+  animation: ob-voice-pulse 1.6s ease-in-out infinite;
+}
+
+/* Matches the generic hover rule's specificity (class + :hover + :not(:disabled))
+   so this wins on source order instead of losing to it — without :not(:disabled)
+   here, the generic rule's higher specificity let color: #fff carry over from
+   .ob-voice__mic--active while the fill flipped white, and the icon vanished
+   into its own hover background. Inverted on purpose (white fill, red stroke,
+   dark icon) so the hover state reads as distinct from the solid-red resting
+   state instead of just a duller version of it. */
+.ob-voice__mic--active:hover:not(:disabled) {
+  background: #fff;
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+@keyframes ob-voice-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(223, 33, 33, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 14px rgba(223, 33, 33, 0);
+  }
+}
+
+.ob-voice__interim {
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.ob-voice__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+/* One button, not a span wrapping two — tapping anywhere removes the meal, the
+   same contract as .home__chip and .all-meals__count-chip--active. Kept in sync
+   with .home__chip; the only deliberate differences are the entry animation and
+   the label's missing text-transform (see .ob-voice__chip-label). */
+.ob-voice__chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--color-text);
+  border-radius: 999px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.875rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  animation: ob-chip-in 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Invisible touch target — see IconButton.css for the technique. Now a single
+   overlay rather than the split pair this needed while the label was separately
+   tappable: inset resolves against the padding box and the 1px border eats 1px
+   of visual reach, so -5px overhangs the visible edge by 4px — exactly half of
+   .ob-voice__chips' 8px gap, letting two neighbours meet in the middle with
+   zero overlap. 38px tall (30 + 4 + 4), same as the filter chips. */
+.ob-voice__chip::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  clip-path: inset(0 round var(--touch-target-radius));
+}
+
+/* Text stays --color-text on hover rather than --color-text-hover: these sit on
+   page cream mid-onboarding, where the lighter cut reads as disabled. */
+.ob-voice__chip:hover {
+  background: #fff;
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+@keyframes ob-chip-in {
+  from {
+    opacity: 0;
+    scale: 0.9;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* No text-transform: capitalize here, unlike .home__chip-label — that one holds
+   single-word category names, whereas these are spoken meal titles already
+   sentence-cased by cleanTitle(), and title-casing would render "Mac and
+   cheese" as "Mac And Cheese". */
+.ob-voice__chip-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.ob-voice__chip-close {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.ob-voice__unsupported {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+/* ---------------------------------------------------------------- *
+ * Manual add
+ * ---------------------------------------------------------------- */
+
+/* Provider sign-in, above the email form on the account step.
+ *
+ * Deliberately not built on .btn: that class forces the display face at
+ * weight 900, uppercase, 1px tracking — right for the shouty CTA, wrong here.
+ * Apple's and Google's button guidelines both specify sentence-case labels in
+ * a normal weight, and matching them is most of what makes the screen read as
+ * a real signup rather than a mock of one. Pill radius is the one place the
+ * brand wins: both guidelines permit it, and it keeps the shelf CTA's shape. */
+.ob-social {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ob-social__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  padding: 0 20px;
+  background: #FFFFFF;
+  /* White on cream is 1.08:1 — same story as the inputs, the border is the
+     only thing marking the control's edge. */
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--color-text);
+  transition: background-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+}
+
+.ob-social__btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+@media (hover: hover) {
+  .ob-social__btn:hover:not(:disabled) {
+    background: var(--color-card-hover);
+  }
+}
+
+/* Only the button actually waiting fades; the other stays legible so the row
+   doesn't read as "everything broke". */
+.ob-social__btn:disabled {
+  cursor: default;
+}
+
+.ob-social__btn--pending {
+  opacity: 0.6;
+}
+
+.ob-social__logo {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.ob-social__spinner {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border: 2px solid var(--color-border-strong);
+  border-top-color: var(--color-text);
+  border-radius: 50%;
+  animation: ob-social-spin 0.7s linear infinite;
+}
+
+@keyframes ob-social-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-social__spinner {
+    animation-duration: 2.4s;
+  }
+}
+
+.ob-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.24px;
+  color: var(--color-text-muted);
+}
+
+.ob-divider::before,
+.ob-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  /* Decorative, not a control boundary — the hairline token is correct here. */
+  background: var(--color-border);
+}
+
+.ob-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ob-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ob-field__label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.24px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.ob-field__input,
+.ob-field__select {
+  width: 100%;
+  height: 47px;
+  background: var(--color-card);
+  /* The field's fill is only 1.06:1 from the page, so this border is the whole
+     of the "this is an input" signal and has to carry 3:1 on its own. */
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  padding: 13px 15px;
+  font-size: 16px;
+  color: var(--color-text);
+}
+
+.ob-field__input::placeholder {
+  /* 5.6:1 on --color-card. The old #757575 was 4.50:1 — passing by 0.005. */
+  color: #666666;
+}
+
+/* No `outline: none` here: the global :focus-visible ring in index.css is a
+   2px --color-accent outline at 4.43:1, and killing it left keyboard users
+   with only this border change, which is 1.5:1. */
+.ob-field__input:focus,
+.ob-field__select:focus {
+  border-color: var(--color-text);
+}
+
+.ob-field__input[aria-invalid='true'] {
+  border-color: var(--color-error-text);
+}
+
+.ob-field__hint,
+.ob-field__error {
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.ob-field__hint {
+  color: var(--color-text-muted);
+}
+
+/* Replaces the placeholder as the home for the password rule: a placeholder
+   disappears the moment the user types, taking the rule with it right when the
+   validation that depends on it starts to matter. */
+.ob-field__error {
+  color: var(--color-error-text);
+  font-weight: 700;
+}
+
+.ob-field__input-wrap {
+  position: relative;
+}
+
+.ob-field__input--password {
+  padding-right: 44px;
+}
+
+.ob-field__toggle {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+}
+
+/* The remove button is a fixed 36px against a 47px input, so it has to be
+   centered rather than left to stretch. */
+.ob-field__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.ob-form__ingredient-add {
+  align-self: flex-start;
+}
+
+/* ---------------------------------------------------------------- *
+ * Roster
+ * ---------------------------------------------------------------- */
+
+.ob-roster__counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ob-roster__count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  background: var(--color-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* The count is the number that matters, so it takes the Black cut and the size
+   the paywall gives a price. */
+.ob-roster__count b {
+  font-family: 'Gliker Black', var(--font-sans);
+  font-weight: 900;
+  font-size: 16px;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Fills the space between the counts and the CTA rather than taking a fixed
+   slice of it — a vh cap leaves dead air on tall frames and crowds short ones,
+   and inside the desktop device frame vh isn't the frame's height anyway. */
+.ob-roster__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 2px;
+  scrollbar-width: none;
+}
+
+.ob-roster__list::-webkit-scrollbar {
+  display: none;
+}
+
+/* The paywall's plan-row treatment — same fill, stroke and radius — with tighter
+   padding, because this list runs to thirty rows where that one runs to three. */
+.ob-roster__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  padding: 12px 12px 12px 19.5px;
+}
+
+.ob-roster__row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ob-roster__row-title {
+  font-family: 'Gliker Semi Bold', var(--font-sans);
+  font-weight: 600;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ob-roster__row-meta {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.ob-roster__row-remove {
+  flex: none;
+  background: none;
+  border: none;
+  padding: 4px;
+  color: var(--color-text-muted);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+}
+
+.ob-roster__row-remove:hover {
+  color: var(--color-accent);
+}
+
+/* ---------------------------------------------------------------- *
+ * Main event / champion column
+ *
+ * Mirrors .results-page__body's 320px centered column so the reused
+ * FindMealResults and MealDetail styles land the same way they do on the real
+ * pages — including the device-frame rule that bleeds .results__title to the
+ * frame edges with `(375 - 320) / 2` gutter math. Deliberately does NOT reuse
+ * .results-page itself, which pins to 100dvh and absolutely positions the page
+ * header — both of which would fight the onboarding chrome above.
+ * ---------------------------------------------------------------- */
+
+.ob-fight__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  /* Containing block for the winner impact burst, which MealDetail.css positions
+     absolutely against `.page.detail-page--winner`. */
+  position: relative;
+}
+
+/* The champion headline group. The burst is positioned against this box, and
+   the three spacing vars it reads are set on `.detail-page--winner` upstream —
+   a page class that doesn't exist in onboarding, so they're restated here. */
+.ob-champion__head {
+  position: relative;
+  --winner-impact-top: 0px;
+  --winner-impact-height: 66px;
+  --winner-impact-gap: 16px;
+  /* Clears the out-of-flow burst (66px) plus the frame's gap below it. */
+  padding-top: 82px;
+}
+
+/* The real winner panel breaks out to full-viewport width, which inside the
+   desktop device frame would escape the frame. Bleeding through .ob-step's own
+   16px inset instead lands on the frame edges at every width. Compound selector
+   so it beats .detail__card--winner regardless of stylesheet order. flex: 1
+   lets it stretch to fill a short step (an empty-macro record); it's also free
+   to grow past that when a full record — prep, cook, macros, ingredients — runs
+   longer, since the page as a whole scrolls (see .onboarding__step above) and
+   the shelf below is pinned independently via position: sticky rather than by
+   capping this panel's height. */
+.detail__card--winner.ob-champion__panel {
+  flex: 1;
+  margin-left: -16px;
+  margin-right: -16px;
+  --winner-inset: 40px;
+  border-radius: 0;
+  /* Runs the panel's fill 32px past its own end, under the transparent band the
+     shelf reserves for the dome (see .ob-step__actions--on-panel). Scrolled to
+     the bottom the shelf sits at its flow position — immediately below this
+     panel — so without the overlap the band would expose a 32px stripe of the
+     slightly darker page cream above the arc. The matching negative margin
+     keeps the shelf where it was, so this only extends the fill; the extra
+     32px is padding, never content, so nothing lands under the dome that the
+     user hasn't already scrolled past. */
+  padding-bottom: 56px;
+  margin-bottom: -32px;
+}
+
+/* The hero art holds a fixed 280x230 box regardless of how tall the rest of
+   the step gets — a 2-line meal title in the cards below must never eat into
+   it. .onboarding__step already scrolls (overflow-y: auto), so a step that
+   doesn't fit scrolls instead of squeezing the art. */
+.ob-fight__body,
+.ob-fight__body .results__stage {
+  min-height: 0;
+}
+
+.ob-fight__body .results__stage {
+  flex: 1 1 auto;
+}
+
+.ob-fight__body .results__hero-image {
+  width: 280px;
+  max-width: 100%;
+  max-height: 230px;
+  flex-shrink: 0;
+  /* The frame tucks the headline 24px up into the art. */
+  margin: 0 auto -24px;
+  /* Letterboxes rather than distorts if the box's aspect ratio doesn't match
+     the source art's. */
+  object-fit: contain;
+}
+
+.ob-fight__body .results__title,
+.ob-fight__body .results__grid {
+  flex-shrink: 0;
+}
+
+/* 8px from the headline to the first card, against the 16px the real results
+   page uses — the frame is tighter. Pulled via negative top margin (moving
+   the headline up) rather than margin-bottom, so the card below stays put. */
+.ob-fight__body .results__title {
+  margin-top: -8px;
+}
+
+/* New Round carries a 28px cushion on the real results page, where it follows
+   the cards directly. On the shelf the block's own padding already provides it. */
+.ob-step__actions .results__reroll {
+  margin-top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-voice__chip,
+  .ob-voice__mic--active {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------- *
+ * Paywall
+ * ---------------------------------------------------------------- */
+
+.ob-plans {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ob-plan {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  background: var(--color-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  padding: 17.5px 19.5px;
+  color: var(--color-text);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.ob-plan:hover {
+  border-color: var(--color-border-hover);
+}
+
+.ob-plan--selected {
+  border-color: var(--color-accent);
+  background: #fff;
+}
+
+.ob-plan__name {
+  font-family: 'Gliker Semi Bold', var(--font-sans);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.ob-plan__note {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.ob-plan__price {
+  font-family: 'Gliker Black', var(--font-sans);
+  font-weight: 900;
+  font-size: 1.35rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ob-plan__badge {
+  position: absolute;
+  top: -9px;
+  right: 27px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+/* ---------------------------------------------------------------- *
+ * Success
+ * ---------------------------------------------------------------- */
+
+/* The design has no badge or checkmark here — the headline carries the whole
+   screen, sitting on its own in the middle of an otherwise empty frame. */
+.ob-success {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.ob-success__title {
+  font-family: 'Gliker Black', var(--font-sans);
+  font-weight: 900;
+  font-size: 36px;
+  line-height: 34.2px;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.ob-success__body {
+  font-size: 16px;
+  color: var(--color-text-muted);
+  max-width: 329px;
+}
