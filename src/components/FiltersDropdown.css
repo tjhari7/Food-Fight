@@ -72,11 +72,63 @@
   background: var(--color-card-hover);
 }
 
+/* Custom rather than the native control (accent-color alone) so the box can
+   carry the same hover-preview language as .meal-card__radio: a filled shape
+   that only appears on hover, before the tap commits anything. Square corners
+   here (vs. that control's circle) are what mark this as a multi-select
+   rather than a single pick. */
 .filters-dropdown__option input {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
   width: 18px;
   height: 18px;
-  accent-color: var(--color-accent);
+  border-radius: 4px;
+  border: 1.5px solid var(--color-text);
+  background: var(--color-card);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* The hover preview and the checkmark share this box rather than each getting
+   their own pseudo-element: the two states are mutually exclusive (checked
+   input is never also hovered-unchecked), so one element just gets redefined
+   per state below. */
+.filters-dropdown__option input::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+
+/* Mirrors .meal-card__radio::before: the row's hover, not the checkbox's own,
+   drives the fill — hovering anywhere on the label previews the tap. */
+@media (hover: hover) {
+  .filters-dropdown__option:hover input:not(:checked)::before {
+    background: var(--color-text);
+  }
+}
+
+.filters-dropdown__option input:checked {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+/* Same two-border tick as .ob-benefits__item::after, redrawn on the shared
+   ::before box instead of a fresh ::after. */
+.filters-dropdown__option input:checked::before {
+  width: 5px;
+  height: 2.5px;
+  border-radius: 0;
+  background: transparent;
+  border-left: 1.75px solid #fff;
+  border-bottom: 1.75px solid #fff;
+  transform: rotate(-45deg) translate(1px, -1px);
 }
 
 .filters-dropdown__clear {
