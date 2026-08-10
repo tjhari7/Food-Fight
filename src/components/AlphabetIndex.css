@@ -60,5 +60,14 @@
 
 .alphabet-index__bubble-letter {
   display: inline-block;
-  transform: translateY(3px);
+  /* Optical centering nudge, same problem as --btn-label-optical-nudge: flex
+     centers the LINE BOX, and Gliker Semi Bold reserves more room under the
+     baseline than a bare capital ever uses, so the glyph ink sits low. Measured
+     against the live 56px bubble at 28px: the baseline lands 10.75px below the
+     circle's centre, and the ink of every flat-topped capital spans exactly
+     20px up from the baseline, so its centre sits 0.77px too low. The old 3px
+     was tuned against the pre-WOFF2 metrics and now pushes the letter ~3.8px
+     below centre. Re-measure if the font, font-size, or bubble size changes.
+     The extra 1px on top of that is a deliberate optical lift, per design. */
+  transform: translateY(-1.77px);
 }
