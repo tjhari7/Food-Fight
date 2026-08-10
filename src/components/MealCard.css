@@ -188,3 +188,40 @@
      extra 6px cancels that difference optically. */
   right: 12px;
 }
+
+/* Unselected contender in a group round — same 24px box and position as the
+   filled check above (right: 12px), so tapping reads as this exact circle
+   filling in rather than a new element appearing in a different spot. Plain
+   black ring (--color-text, the app's near-black) at rest, same stroke weight
+   the card itself uses (1px, see .card in Card.css). Red is reserved for an
+   actual pick (see --selected above), so this stays monochrome until chosen.
+   The inner dot only appears on hover, as a native radio input would — a
+   preview of what a tap commits, not the commitment itself. */
+.meal-card__radio {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 1px solid var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.meal-card__radio::before {
+  content: '';
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+
+@media (hover: hover) {
+  .meal-card--result:hover .meal-card__radio::before {
+    background: var(--color-text);
+  }
+}

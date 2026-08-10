@@ -19,9 +19,11 @@ const EXIT_MS = 250
  * tracking and no rubber-banding past the top. Those add real complexity for a
  * gesture that is not this feature's point.
  *
- * `active` splits the two states the sheet has. Before a group exists it's an
- * invitation; once the host has copied or shared the link it gains the ACTIVE
- * badge and the way out.
+ * `active` gates the ACTIVE badge and the Cancel Group way out. In practice
+ * the sheet only ever opens already active — the parent flips a group live
+ * the instant the host taps the entry icon — but the prop stays separate
+ * from `open` so a future path that opens the sheet without activating
+ * (or a cancel that closes without a fresh mount) still renders correctly.
  *
  * `open` is the single source of truth. A dismissal calls onClose() straight
  * away — the parent flips `open` false immediately and this keeps itself

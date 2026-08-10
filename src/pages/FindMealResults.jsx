@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useData } from '../context/DataContext.jsx'
 import { ResultMealCard } from '../components/MealCard'
 import { shuffle } from '../lib/random'
-import { MAIN_EVENT_HEADLINES, pickNextHeadline } from '../lib/mainEventHeadlines'
+import { MAIN_EVENT_HEADLINES, pickNextHeadline, pickGroupHeadline } from '../lib/mainEventHeadlines'
 import { mealMatchesIngredients } from '../lib/ingredientMatch'
 import { prefersReducedMotion, useSwipeBackHome } from '../lib/swipeBack'
 import { useGroupJudges, formatJudges, buildInviteLink } from '../lib/groupDecision'
@@ -49,7 +49,12 @@ export default function FindMealResults() {
     if (incomingWinnerId) base.add(incomingWinnerId)
     return base
   })
-  const [headline, setHeadline] = useState(MAIN_EVENT_HEADLINES[0])
+  // A round arrived at with judges already watching (a rematch) opens on a group
+  // headline, since the tap that would otherwise have drawn one happened on the
+  // previous round.
+  const [headline, setHeadline] = useState(() =>
+    location.state?.groupActive ? pickGroupHeadline(null) : MAIN_EVENT_HEADLINES[0]
+  )
   const [phase, setPhase] = useState('idle') // 'idle' | 'exit' | 'enter' | 'leave'
   const headlineQueueRef = useRef([])
   const { leaving, startBack, rootProps, leavingClass } = useSwipeBackHome()
@@ -57,7 +62,13 @@ export default function FindMealResults() {
   // Group decision. Entirely client-side — see lib/groupDecision.js. `active`
   // is what locks the round: once judges are in, the standing matchup is the
   // thing being voted on, so it can't be rerolled or crowned by hand.
-  const [groupActive, setGroupActive] = useState(false)
+  //
+  // Restored on arrival rather than started fresh: the judges are all holding
+  // the same invite link, so a rematch is the same room watching a new round,
+  // not a new group. The tally rides along with the flag and is frozen at mount
+  // so the state-replace below (which drops the swipe flags) can't reset it.
+  const [groupActive, setGroupActive] = useState(() => Boolean(location.state?.groupActive))
+  const [resumeJudgeCount] = useState(() => location.state?.judgeCount || 0)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [confirmingCancel, setConfirmingCancel] = useState(false)
   const [toastMessage, setToastMessage] = useState(null)
@@ -65,7 +76,7 @@ export default function FindMealResults() {
   // — tapping the other contender moves the choice rather than adding to it,
   // so the host can go back and forth before calling the fight.
   const [selectedId, setSelectedId] = useState(null)
-  const judgeCount = useGroupJudges(groupActive)
+  const judgeCount = useGroupJudges(groupActive, resumeJudgeCount)
 
   // Frozen at mount: clearing the flag below must not retract the class
   // mid-animation. Only the winner sits to this page's right, so a back swipe
@@ -118,9 +129,17 @@ export default function FindMealResults() {
           // Challenger up top, loser held in the second slot — so the meal
           // that's still in play visibly sits below the VS, not above it.
           setCurrentPickIds([challenger.id, loserMeal.id])
-          const { headline: nextHeadline, queue } = pickNextHeadline(headline.id, headlineQueueRef.current)
-          headlineQueueRef.current = queue
-          setHeadline(nextHeadline)
+          // Judges are still watching a resumed group round, so a rematch draws
+          // another group headline rather than falling back to the solo set —
+          // the mount-time draw above only covers the very first render, not
+          // every round this effect turns over afterward.
+          if (groupActive) {
+            setHeadline(pickGroupHeadline(headline.id))
+          } else {
+            const { headline: nextHeadline, queue } = pickNextHeadline(headline.id, headlineQueueRef.current)
+            headlineQueueRef.current = queue
+            setHeadline(nextHeadline)
+          }
           return
         }
       }
@@ -131,7 +150,7 @@ export default function FindMealResults() {
     const picked = shuffle(filteredPool).slice(0, targetCount)
     setCurrentPickIds(picked.map((m) => m.id))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, filteredPool, currentPickIds, targetCount, isRematch, incomingLoserId, exclusionIds])
+  }, [loading, filteredPool, currentPickIds, targetCount, isRematch, incomingLoserId, exclusionIds, groupActive])
 
   const currentPicks = useMemo(() => {
     if (!currentPickIds) return []
@@ -197,13 +216,17 @@ export default function FindMealResults() {
   const canFight = !loading && currentPicks.length === 2
 
   // The one route to the winner view. Both ways of settling a fight — a
-  // hand-crowned tap and a group's Fight Decision — land here with the same
-  // state, so the winner page needs no notion of which one produced it.
+  // hand-crowned tap and a group's Fight Decision — land here, and the judges
+  // flag is the only thing that tells them apart downstream.
   function goToWinner(meal) {
     const loser = currentPicks.find((m) => m.id !== meal.id)
     navigate(`/meals/${meal.id}`, {
       state: {
         fromMainEvent: true,
+        // While a group is running, Fight Decision is the only thing that can
+        // crown (a card tap just moves the host's pick), so this marks exactly
+        // the judges' wins — which get a fixed headline instead of a random one.
+        judgesDecision: groupActive,
         returnTo: {
           pathname: '/find/results',
           state: {
@@ -212,6 +235,10 @@ export default function FindMealResults() {
             exclusionIds: Array.from(exclusionIds),
             winnerId: meal.id,
             loserId: loser ? loser.id : null,
+            // A rematch resumes the same fight, so the group returns with it:
+            // the flag alone would restart the tally at one judge.
+            groupActive,
+            judgeCount,
           },
         },
       },
@@ -235,21 +262,29 @@ export default function FindMealResults() {
     goToWinner(currentPicks[Math.floor(Math.random() * currentPicks.length)])
   }
 
-  function activateGroup(message) {
-    setGroupActive(true)
-    setToastMessage(message)
+  // Tapping the group icon is the activation itself — no separate invite
+  // step. The drawer always opens already ACTIVE; Copy Link and Share Link
+  // are just ways to hand out a link to a group that already exists.
+  function handleOpenGroupDrawer() {
+    if (!groupActive) {
+      setGroupActive(true)
+      // The round stops being a solo pick the moment judges are in, so the
+      // headline changes with it. Only on the activating tap — reopening the
+      // drawer to copy the link mustn't reshuffle the header underneath it.
+      setHeadline(pickGroupHeadline(null))
+    }
+    setDrawerOpen(true)
   }
 
   async function handleCopyLink() {
     const link = buildInviteLink()
     try {
       await navigator.clipboard.writeText(link)
-      activateGroup('Link copied.')
+      setToastMessage('Link copied.')
     } catch {
       // Clipboard access is refused on insecure origins and in some embedded
-      // webviews. The group still opens — losing the copy shouldn't cost the
-      // host the round they just started.
-      activateGroup('Group decision started.')
+      // webviews. Nothing else to fall back to here.
+      setToastMessage("Couldn't copy link.")
     }
   }
 
@@ -265,10 +300,10 @@ export default function FindMealResults() {
         text: 'Judge this fight — which one should we make?',
         url: link,
       })
-      activateGroup('Link shared.')
+      setToastMessage('Link shared.')
     } catch {
-      // Covers the user dismissing the share sheet (AbortError), which is a
-      // decision not to invite anyone — so no group is opened.
+      // Covers the user dismissing the share sheet (AbortError) — not an
+      // error, just no link went out.
     }
   }
 
@@ -279,6 +314,12 @@ export default function FindMealResults() {
     // Cards go back to being the way to crown a winner, so a stale red check
     // must not survive into the ungrouped round.
     setSelectedId(null)
+    // The judges just left, so hand the header back to the solo set rather than
+    // leaving it crediting a room that isn't there. Picks up the solo rotation
+    // where it stood when the group started.
+    const { headline: nextHeadline, queue } = pickNextHeadline(headline.id, headlineQueueRef.current)
+    headlineQueueRef.current = queue
+    setHeadline(nextHeadline)
   }
 
   return (
@@ -301,7 +342,7 @@ export default function FindMealResults() {
             label={groupActive ? 'Group decision — manage' : 'Start a group decision'}
             size={20}
             className={`icon-btn--filled${groupActive ? ' icon-btn--icon-filled' : ''}`}
-            onClick={() => setDrawerOpen(true)}
+            onClick={handleOpenGroupDrawer}
           />
         )}
       </div>
@@ -361,13 +402,18 @@ export default function FindMealResults() {
             button now does. */}
         {!loading && filteredPool.length > 0 && (
           groupActive ? (
-            <Button
-              variant="secondary"
-              className="btn--full results__reroll"
-              onClick={handleFightDecision}
-            >
-              <span className="results__reroll-label">Fight Decision</span>
-            </Button>
+            <>
+              <p className="results__fight-note">
+                Wait until everyone has voted, then call the fight. All judges will be notified of the winner.
+              </p>
+              <Button
+                variant="secondary"
+                className="btn--full results__reroll"
+                onClick={handleFightDecision}
+              >
+                <span className="results__reroll-label">Fight Decision</span>
+              </Button>
+            </>
           ) : (
             <Button variant="secondary" className="btn--full results__reroll" onClick={handleReroll}>
               <img src={refreshIcon} alt="" className="results__reroll-icon" /> <span className="results__reroll-label">New Round</span>

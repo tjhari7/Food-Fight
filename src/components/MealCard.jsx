@@ -38,9 +38,13 @@ function MealCardStats({ meal }) {
 
 // `selectable` is the group-decision state: a tap picks this contender instead
 // of navigating to it, so the card keeps its normal default and hover states
-// and only swaps the chevron — which promises "this opens" — for a check that
-// reads as "this is chosen". `aria-pressed` is set only when selectable, since
-// a plain result card is a link-like button with no pressed state to report.
+// and only swaps the chevron — which promises "this opens" — for a radio-style
+// ring that reads as "pick me", filling into a check once chosen. Both
+// contenders show the ring, and tapping either one swaps which is selected, so
+// it never looks like a one-way commit. The ring is plain markup rather than a
+// glyph — a Material Symbol can't carry a separate stroke colour and inner-fill
+// colour at once. `aria-pressed` is set only when selectable, since a plain
+// result card is a link-like button with no pressed state to report.
 export function ResultMealCard({
   meal,
   categoryName,
@@ -57,10 +61,13 @@ export function ResultMealCard({
       tabIndex={0}
       aria-pressed={selectable ? selected : undefined}
     >
-      <Icon
-        name={selected ? 'check_circle' : 'chevron_right'}
-        className={`meal-card__chevron${selected ? ' meal-card__chevron--selected' : ''}`}
-      />
+      {selected ? (
+        <Icon name="check_circle" className="meal-card__chevron meal-card__chevron--selected" />
+      ) : selectable ? (
+        <span className="meal-card__radio" aria-hidden="true" />
+      ) : (
+        <Icon name="chevron_right" className="meal-card__chevron" />
+      )}
       <p className="eyebrow">{categoryName}</p>
       <h3 className="meal-card__title">{meal.title}</h3>
       <MealCardStats meal={meal} />

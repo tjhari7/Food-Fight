@@ -191,6 +191,15 @@
   width: auto;
 }
 
+.results__fight-note {
+  margin-top: 28px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-text);
+  text-align: center;
+}
+
 .results__reroll {
   display: inline-flex;
   align-items: center;
@@ -203,6 +212,10 @@
   font-family: 'Gliker Black', var(--font-sans);
   font-size: 24px;
   letter-spacing: 1px;
+}
+
+.results__fight-note + .results__reroll {
+  margin-top: 0;
 }
 
 .results__reroll-icon {

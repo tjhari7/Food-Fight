@@ -26,8 +26,15 @@ function randomInt(min, max) {
 /**
  * Judge count for an active group, climbing from 1 to a randomly chosen total
  * between MIN_JUDGES and MAX_JUDGES. Returns 0 when no group is running.
+ *
+ * `resumeFrom` picks the tally back up where a previous round left it — a
+ * rematch is the same fight continuing, and the judges are holding the same
+ * link, so they mustn't disband and re-gather from 1 between rounds. Passing 0
+ * (or nothing) starts a fresh group. Resuming can only ever add judges: the
+ * target is drawn no lower than the count already reached, so a group that
+ * already hit MAX simply stops growing.
  */
-export function useGroupJudges(active) {
+export function useGroupJudges(active, resumeFrom = 0) {
   const [count, setCount] = useState(0)
   const timerRef = useRef(null)
 
@@ -42,8 +49,8 @@ export function useGroupJudges(active) {
     // state would either need a ref anyway or put a side effect inside a
     // setState updater — which StrictMode double-invokes, spawning two timer
     // chains for every arrival.
-    const target = randomInt(MIN_JUDGES, MAX_JUDGES)
-    let current = 1
+    const target = randomInt(Math.max(MIN_JUDGES, resumeFrom), MAX_JUDGES)
+    let current = Math.max(1, resumeFrom)
     setCount(current)
 
     function scheduleNext() {
@@ -57,7 +64,7 @@ export function useGroupJudges(active) {
 
     scheduleNext()
     return () => clearTimeout(timerRef.current)
-  }, [active])
+  }, [active, resumeFrom])
 
   return count
 }

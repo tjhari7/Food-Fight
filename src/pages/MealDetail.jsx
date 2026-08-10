@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation, useViewTransitionState } from 'rea
 import { useData } from '../context/DataContext.jsx'
 import { deleteMeal } from '../api/meals'
 import { MEAL_MORPH_NAME, shouldMorph } from '../lib/morph'
-import { getNextWinnerHeadline } from '../lib/winnerHeadlines'
+import { getNextWinnerHeadline, getNextJudgesHeadline } from '../lib/winnerHeadlines'
 import { useSwipeBackTo } from '../lib/swipeBack'
 import { calcCalories } from '../lib/calories'
 import BackHeader from '../components/BackHeader'
@@ -25,7 +25,14 @@ export default function MealDetail() {
 
   const returnTo = location.state?.returnTo
   const fromMainEvent = Boolean(location.state?.fromMainEvent)
-  const [winnerHeadline] = useState(() => (fromMainEvent ? getNextWinnerHeadline() : null))
+  // A group round is settled by the judges, so it draws from their own pool of
+  // headlines rather than the solo one. Only the matching draw is called, so a
+  // group win never spends a solo headline.
+  const judgesDecision = Boolean(location.state?.judgesDecision)
+  const [winnerHeadline] = useState(() => {
+    if (!fromMainEvent) return null
+    return judgesDecision ? getNextJudgesHeadline() : getNextWinnerHeadline()
+  })
 
   // Only the meal list has a card to morph with. Arrivals from the main event
   // run their own entrance (winner-enter in MealDetail.css), and no transition
@@ -67,9 +74,12 @@ export default function MealDetail() {
 
   function handleEdit() {
     // Preserve fromMainEvent so Cancel/Save return to the winner view (with its
-    // headline), not a plain detail page.
+    // headline), not a plain detail page. judgesDecision rides along too, or the
+    // return trip would re-mount into a random headline and lose the verdict.
     navigate(`/meals/${id}/edit`, {
-      state: { returnTo: { pathname: `/meals/${id}`, state: { fromMainEvent, returnTo } } },
+      state: {
+        returnTo: { pathname: `/meals/${id}`, state: { fromMainEvent, judgesDecision, returnTo } },
+      },
     })
   }
 

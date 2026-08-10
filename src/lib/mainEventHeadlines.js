@@ -12,6 +12,18 @@ export const MAIN_EVENT_HEADLINES = [
   { id: 'meal-show-down', lines: ['Meal', 'Show', 'Down'] },
 ]
 
+// Group rounds. Same promo voice as the solo set above, but crediting the room
+// instead of the meal — they only ever show while judges are watching. Held to
+// six characters a word like the solo set, which is the ceiling the 46px
+// .results__title lockup can hold inside a 375px screen.
+export const GROUP_HEADLINES = [
+  { id: 'bite-club-votes', lines: ['Bite', 'Club', 'Votes'] },
+  { id: 'the-judges-match', lines: ['The', 'Judges', 'Match'] },
+  { id: 'the-group-bout', lines: ['The', 'Group', 'Bout'] },
+  { id: 'feed-the-judges', lines: ['Feed', 'The', 'Judges'] },
+  { id: 'your-panel-fight', lines: ['Your', 'Panel', 'Fight'] },
+]
+
 export function getMainEventHeadline(index) {
   return MAIN_EVENT_HEADLINES[index % MAIN_EVENT_HEADLINES.length]
 }
@@ -37,4 +49,13 @@ export function pickNextHeadline(currentId, queue = []) {
   }
   const [headline, ...rest] = nextQueue
   return { headline, queue: rest }
+}
+
+// One group headline, drawn fresh and never repeating the one on screen. No
+// queue to thread here, unlike the solo set: a group round can't be rerolled
+// (New Round is swapped out for Fight Decision), so this is called at most once
+// per mount — a cycling queue would be rebuilt every time and buy nothing.
+export function pickGroupHeadline(currentId) {
+  const pool = GROUP_HEADLINES.filter((h) => h.id !== currentId)
+  return shuffle(pool.length > 0 ? pool : GROUP_HEADLINES)[0]
 }

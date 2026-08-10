@@ -149,6 +149,19 @@
   white-space: nowrap;
 }
 
+/* The group pool — The Judges Decision, Your Crews Champ, The Crowds Winner.
+   All 3-line lockups sharing one treatment, so they sit outside the numbered
+   rotation above and run a size down from it (40/34 vs 46/40) to keep the
+   longest word, DECISION, inside the gutters. */
+.detail__winner-title--judges {
+  font-size: 40px;
+  line-height: 34px;
+}
+
+.detail__winner-title--judges span {
+  white-space: nowrap;
+}
+
 .detail__card {
   position: relative;
   text-align: left;
