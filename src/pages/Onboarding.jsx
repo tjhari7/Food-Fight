@@ -16,18 +16,19 @@ function OnboardingRunner({ flow }) {
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [shelfHeight, setShelfHeight] = useState(0)
 
-  // Variant B ships the starter pack without spending a screen on it, so the
-  // very first fight has a roster to draw from.
-  useEffect(() => {
-    if (flow.seedStarterPack) addStarterPack()
-  }, [flow.seedStarterPack, addStarterPack])
-
+  // Reset and seed have to share one effect, in this order. Split across two,
+  // the seed ran first and reset() wiped it right back out — which stayed
+  // invisible in B only because its Main Event sits at step 2 and re-seeds an
+  // empty roster itself. A reaches its roster screen first and showed nothing.
+  //
   // A fresh run every time the variant changes, so switching between A and B
-  // from Settings never inherits the other flow's roster.
+  // from Settings never inherits the other flow's roster; both variants then
+  // seed the starter pack on mount rather than spending a screen on it.
   useEffect(() => {
     reset()
     setIndex(0)
-  }, [flow.id, reset])
+    if (flow.seedStarterPack) addStarterPack()
+  }, [flow.id, flow.seedStarterPack, reset, addStarterPack])
 
   const step = flow.steps[index]
   const isLast = index === flow.steps.length - 1
@@ -88,43 +89,51 @@ function OnboardingRunner({ flow }) {
 
   return (
     <div className="onboarding">
-      <div
-        ref={chromeRef}
-        className={
-          'onboarding__chrome' +
-          (flow.showExit ? '' : ' onboarding__chrome--no-exit') +
-          (step.flush ? ' onboarding__chrome--flush' : '')
-        }
-      >
-        <IconButton
-          name="chevron_left"
-          label="Back"
-          className="icon-btn--filled"
-          onClick={goBack}
-        />
-
-        {progress > 0 && (
-          <div
-            className="onboarding__progress"
-            role="progressbar"
-            aria-valuenow={index + 1}
-            aria-valuemin={1}
-            aria-valuemax={flow.steps.length}
-            aria-label={`Step ${index + 1} of ${flow.steps.length}`}
-          >
-            <div className="onboarding__progress-fill" style={{ width: `${progress}%` }} />
-          </div>
-        )}
-
-        {flow.showExit && (
+      {/* Success is the flow's confirmation screen, one step past the
+          paywall. The chrome bar (back chevron, progress, exit) has nothing
+          left to do there — there's no step to return to that isn't the
+          purchase screen, no progress left to track, and exit lands on the
+          same place Continue does — so the whole bar is skipped rather than
+          left empty, letting the content take the space it reserved. */}
+      {!isLast && (
+        <div
+          ref={chromeRef}
+          className={
+            'onboarding__chrome' +
+            (flow.showExit ? '' : ' onboarding__chrome--no-exit') +
+            (step.flush ? ' onboarding__chrome--flush' : '')
+          }
+        >
           <IconButton
-            name="close"
-            label="Exit onboarding"
+            name="chevron_left"
+            label="Back"
             className="icon-btn--filled"
-            onClick={exit}
+            onClick={goBack}
           />
-        )}
-      </div>
+
+          {progress > 0 && (
+            <div
+              className="onboarding__progress"
+              role="progressbar"
+              aria-valuenow={index + 1}
+              aria-valuemin={1}
+              aria-valuemax={flow.steps.length}
+              aria-label={`Step ${index + 1} of ${flow.steps.length}`}
+            >
+              <div className="onboarding__progress-fill" style={{ width: `${progress}%` }} />
+            </div>
+          )}
+
+          {flow.showExit && (
+            <IconButton
+              name="close"
+              label="Exit onboarding"
+              className="icon-btn--filled"
+              onClick={exit}
+            />
+          )}
+        </div>
+      )}
 
       <div className="onboarding__step" ref={stepRef} key={step.key}>
         <Component

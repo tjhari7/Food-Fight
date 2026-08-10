@@ -1,5 +1,4 @@
 import Fight from './steps/Fight.jsx'
-import StarterPack from './steps/StarterPack.jsx'
 import PrebuiltMeals from './steps/PrebuiltMeals.jsx'
 import VoiceAdd from './steps/VoiceAdd.jsx'
 import AddMeal from './steps/AddMeal.jsx'
@@ -10,13 +9,17 @@ import Account from './steps/Account.jsx'
 import Paywall from './steps/Paywall.jsx'
 import Success from './steps/Success.jsx'
 
-// The two variants are mostly the same screens in a different order, so they
-// share one set of step components and differ only in sequence. The structural
-// argument between them is where the roster gets built:
+// The two variants are the same screens in a different order — they share one
+// set of step components, so a change to any shared screen lands in both. The
+// structural argument between them is now only sequence, not content:
 //
-//   A — build the roster first, then fight with it.
-//   B — the starter pack loads silently, fight immediately, then offer voice
-//       once the user has seen why a personal roster is worth the effort.
+//   A — see the roster, add to it, review it, then fight with it.
+//   B — fight immediately, then offer voice once the user has seen why a
+//       personal roster is worth the effort.
+//
+// Both seed the starter pack on mount, so both open on a populated roster and
+// the prebuilt screen is a reveal in each. A keeps the two screens B doesn't
+// have (manual add, roster review) — those are the only frames unique to it.
 //
 // `seedStarterPack` on a flow means the 30 meals are applied on mount rather
 // than offered as a screen.
@@ -25,22 +28,27 @@ import Success from './steps/Success.jsx'
 // Variant B takes its values from the Figma frames rather than computing them
 // from step count: the designer sized the fills by hand (they aren't even
 // steps of 1/6), and the flow ends on two full bars — the paywall and the
-// success screen that follows it both read as "done".
+// success screen that follows it both read as "done". A has no hand-sized
+// values and falls back to an even share of its own (longer) step count, which
+// is why the two flows' bars don't line up screen for screen.
 //
-// `showExit` is a variant-A testing affordance the Figma design doesn't have.
-// B drops it: the design's chrome is a back chevron and the bar, nothing else.
-// Back on the first step still leaves the flow.
+// Neither variant shows an exit affordance: the chrome is a back chevron and
+// the bar, nothing else. Back on the first step still leaves the flow, and the
+// last step (Success) drops the chrome entirely.
 
 export const FLOWS = {
   a: {
     id: 'a',
     label: 'Onboarding A',
     length: 10,
-    seedStarterPack: false,
-    showExit: true,
+    seedStarterPack: true,
+    showExit: false,
     steps: [
       { key: 'fight', Component: Fight },
-      { key: 'starter', Component: StarterPack, skippable: true },
+      // Same reveal B runs, not the old opt-in offer: the pack is seeded on
+      // mount now, so there's nothing left for this screen to add. Roster
+      // (below) is what shows the result.
+      { key: 'prebuilt', Component: PrebuiltMeals },
       { key: 'voice', Component: VoiceAdd, skippable: true },
       { key: 'manual', Component: AddMeal, skippable: true },
       { key: 'roster', Component: Roster },

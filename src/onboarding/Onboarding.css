@@ -1423,10 +1423,14 @@
  * Paywall
  * ---------------------------------------------------------------- */
 
+/* Sizes here are taken from the Onboarding_07 frame rather than guessed at —
+   the previous rem values were all off it: name 16 -> 20, note 14 -> 12,
+   price 21.6 -> 24. Card gap and badge size have since moved past the frame's
+   own values (12px, 9.92px) per direct request. */
 .ob-plans {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
 }
 
 .ob-plan {
@@ -1436,55 +1440,353 @@
   justify-content: space-between;
   gap: 12px;
   width: 100%;
+  /* The frame draws all three cards at 80px. min- rather than fixed so a long
+     note (the trial line, or a narrower screen) wraps instead of clipping. */
+  min-height: 80px;
   text-align: left;
   background: var(--color-card);
-  border: 1.5px solid var(--color-border);
+  /* Held at 1px in every state. The selected card's second ring is an inset
+     shadow rather than a thicker border: borders are laid out inside the
+     border-box, so growing one from 1px to 2px shrinks the content box by a
+     pixel per side and the whole card's text nudges as you tap between plans.
+     A shadow paints over the padding instead and costs no layout. */
+  border: 1px solid var(--color-text);
   border-radius: 14px;
   padding: 17.5px 19.5px;
   color: var(--color-text);
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.ob-plan:hover {
-  border-color: var(--color-border-hover);
+/* Hover previews the selected state's colour at the default 1px, so the only
+   thing that changes on commit is the ring getting its second pixel. The :not()
+   is kept for the selected card's sake: this rule outweighs
+   .ob-plan--selected's (0,2,0) vs (0,1,0), so without it a hovered selection
+   would resolve its border here instead. Same red either way today, but that's
+   a coincidence of the palette, not something to rely on. */
+.ob-plan:hover:not(.ob-plan--selected) {
+  border-color: var(--color-accent);
 }
 
+/* 1px border + 1px inset shadow reads as a 2px red ring drawn inside the card
+   edge, with the border box unchanged from the default state — see .ob-plan. */
 .ob-plan--selected {
   border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
   background: #fff;
+}
+
+.ob-plan__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
 .ob-plan__name {
   font-family: 'Gliker Semi Bold', var(--font-sans);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 20px;
+  line-height: 24px;
 }
 
 .ob-plan__note {
-  font-size: 0.875rem;
+  font-size: 12px;
+  line-height: 16px;
   color: var(--color-text-muted);
+}
+
+/* The frame stacks price over unit, right-aligned, 4px apart. Lifetime gets a
+   unit line too ("forever") so the column reads as one shape across all three —
+   without it that card's price floats centred against the other two. */
+.ob-plan__cost {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
 }
 
 .ob-plan__price {
   font-family: 'Gliker Black', var(--font-sans);
   font-weight: 900;
-  font-size: 1.35rem;
+  font-size: 24px;
+  line-height: 25px;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ob-plan__unit {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-muted);
   white-space: nowrap;
 }
 
 .ob-plan__badge {
   position: absolute;
   top: -9px;
-  right: 27px;
+  right: 28.5px;
   background: var(--color-accent);
   color: #fff;
-  font-size: 0.75rem;
+  /* White on --color-accent is 4.80:1, clears AA at this size. */
+  font-size: 12px;
+  line-height: normal;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.5952px;
+  white-space: nowrap;
   padding: 3px 8px;
   border-radius: 999px;
+}
+
+/* ---------------------------------------------------------------- *
+ * Paywall — trial timeline / benefits
+ * ---------------------------------------------------------------- */
+
+/* Both blocks occupy the same slot between the cards and the shelf, which the
+   frame leaves empty for about a third of the screen. */
+.ob-trial,
+.ob-benefits {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* NOT CURRENTLY RENDERED. The paywall replaced this three-step timeline with a
+   single reminder line (.ob-paywall__reminder) to free the 74px that moved the
+   benefits list above the cards. Kept intact — including the derived dot and
+   rail geometry below, which took measuring to get right — so restoring the
+   timeline is a JSX change. Delete this section if the one-liner sticks. */
+.ob-trial {
+  gap: 7px;
+}
+
+.ob-trial__step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  /* Matches .ob-benefits__item exactly, so the two blocks share one text column
+     whichever marker they carry. 24px = the 14px marker at left:0 plus 10px of
+     clearance. Kept in sync by hand: nothing enforces it, and this rule is
+     currently unrendered, so it would drift silently. */
+  padding-left: 24px;
+}
+
+/* Sized and positioned to the checkmark in .ob-benefits__item::before — same
+   14px box, same 3px top, which is the offset that centres it against a 20px
+   line. Left hollow rather than filled: these are states the user hasn't
+   reached yet, and the ring says "not yet" where a solid dot would say "done".
+   Only the border distinguishes them from a tick now. */
+.ob-trial__step::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 3px;
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-accent);
+  border-radius: 50%;
+  background: var(--color-bg);
+}
+
+/* "Today" is where the user actually is, so it's the only filled node. */
+.ob-trial__step:first-child::before {
+  background: var(--color-accent);
+}
+
+/* Rail between one node and the next. Every number here is derived from the
+   dot's geometry above, so it has to move whenever that does:
+     left  = (dot width - rail width) / 2      = (14 - 1) / 2 = 6.5px
+     top   = dot top + dot height              = 3 + 14       = 17px
+     height= 100% + row gap - dot height       = 100% + 7 - 14
+   The height falls out of running from this dot's bottom edge to the next dot's
+   top edge, which sits `gap` past this box plus the dot's own top offset. At the
+   current 7px gap that lands short of the box edge rather than past it.
+
+   The half pixel in `left` is what centres a 1px rail under a 14px dot. It
+   resolves to a whole device pixel at 2x and 3x, which is every phone this
+   ships to; only a 1x display would land it on a half pixel and soften it. */
+.ob-trial__step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 6.5px;
+  top: 17px;
+  width: 1px;
+  height: calc(100% - 7px);
+  border-radius: 1px;
+  background: var(--color-text);
+}
+
+.ob-trial__day {
+  flex: none;
+  width: 48px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text);
+}
+
+.ob-trial__what {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-muted);
+}
+
+/* Now sits above the plan cards and shows on every plan, so it no longer shares
+   a slot with .ob-trial (which this screen stopped rendering — see Paywall.jsx).
+   The 7px gap is kept because it's what makes three rows land at 74px, which is
+   the budget the layout was measured against.
+
+   The negative top margin pulls .ob-step's 20px flex gap down to 12px —
+   optically closer than the 8px every other step keeps between its heading
+   and its first line of body copy (see .ob-step__head, which bundles title +
+   .ob-step__body under that gap on the steps that have one), since the
+   checkmark markers read heavier than a line of text. */
+.ob-benefits {
+  gap: 7px;
+  margin-top: -8px;
+}
+
+.ob-benefits__item {
+  position: relative;
+  /* 24px = the 14px marker at left:0 plus 10px of clearance. */
+  padding-left: 24px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-muted);
+}
+
+.ob-benefits__item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+/* The tick, drawn from two borders rather than shipping an icon for it. */
+.ob-benefits__item::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 7px;
+  width: 5px;
+  height: 2.5px;
+  border-left: 1.75px solid #fff;
+  border-bottom: 1.75px solid #fff;
+  transform: rotate(-45deg);
+}
+
+/* Sits under the card group, blank on Lifetime.
+ *
+ * min-height rather than conditional mounting: the line has to hold its space
+ * when it empties, or the disclosure block and the shelf jump ~20px every time
+ * the user toggles between a subscription and Lifetime.
+ *
+ * The negative top margin is arithmetic, not a nudge: .ob-step lays its children
+ * out with a 20px gap, and this line is specified at 16px below the cards, so
+ * 4px has to come back out. Any change to .ob-step's gap has to be mirrored here
+ * or this spacing silently drifts.
+ *
+ * Note the result is the same 16px used between the cards themselves, so this
+ * line sits at the group's own rhythm rather than clear of it. It applies to
+ * both subscriptions but reads as attached to whichever card is directly above,
+ * which is Monthly. Widen this if that proximity ever misleads. */
+.ob-paywall__reminder {
+  min-height: 20px;
+  margin: -4px 0 0;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* ---------------------------------------------------------------- *
+ * Paywall — purchase disclosures
+ * ---------------------------------------------------------------- */
+
+/* App Store guideline 3.1.2 requires the price, the renewal cadence, a restore
+   control, and links to the terms and privacy policy on the purchase screen
+   itself. Sits under the CTA inside the shelf, so it inherits the shelf's 12px
+   stack gap. */
+/* Sits on the page cream above the arc, not in the shelf's fill — so it's a
+   sibling of .ob-step__actions rather than a child of it.
+
+   The auto margin moves to this block: .ob-step__actions already carries one to
+   pin itself to the bottom, and with an auto margin on both, flexbox splits the
+   free space between them and opens a gap above the arc. This one absorbs it
+   all; the override below then lets the shelf sit flush underneath. */
+.ob-paywall__fine {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+  text-align: center;
+}
+
+.ob-paywall__fine + .ob-step__actions {
+  margin-top: 0;
+}
+
+.ob-paywall__terms {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-muted);
+}
+
+/* Each sentence gets its own line — the split is made in Paywall.jsx rather
+   than left to text-wrap, so every plan's disclosure is the same two-line
+   shape. `balance` still applies within a line, in case one is long enough to
+   wrap again on a narrow screen. */
+.ob-paywall__terms-line {
+  display: block;
+  text-wrap: balance;
+}
+
+.ob-paywall__links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+/* Fine print is 12px, which would leave a ~16px target. The vertical padding
+   takes each control to 32px without changing where the text sits; the
+   negative margin keeps the row from growing by the same amount. */
+.ob-paywall__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  margin-block: -8px;
+  padding: 8px 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-underline-position: from-font;
+  cursor: pointer;
+}
+
+.ob-paywall__link:hover {
+  color: var(--color-text);
+}
+
+.ob-paywall__dot {
+  color: var(--color-text-muted);
 }
 
 /* ---------------------------------------------------------------- *
@@ -1493,27 +1795,62 @@
 
 /* The design has no badge or checkmark here — the headline carries the whole
    screen, sitting on its own in the middle of an otherwise empty frame. */
+/* The 24px here is the art-to-text clearance on both sides. The title and body
+   keep their own tighter 8px in .ob-success__text rather than inheriting this
+   one — that pairing is a heading and its caption, not two separate blocks. */
 .ob-success {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 24px;
   text-align: center;
 }
 
+.ob-success__text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Square source art (1024x1024) with a lot of transparent margin baked in, so
+   the character reads smaller than the box it occupies — the rendered width is
+   picked against how big the mascot looks, not the file. */
+.ob-success__art {
+  display: block;
+  width: 230px;
+  max-width: 100%;
+  height: auto;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* Type comes from .ob-step__display (the FOOD FIGHT title card, which is also
+   the homepage's .home__title setting): Gliker Black Extra Expanded 60px in
+   --color-accent. That red is 4.43:1 on the page, under the 4.5:1 body-text
+   bar but clear of WCAG's 3:1 large-text threshold at this size. All that's
+   left here is the spacing this screen needs. */
 .ob-success__title {
-  font-family: 'Gliker Black', var(--font-sans);
-  font-weight: 900;
-  font-size: 36px;
-  line-height: 34.2px;
-  text-transform: uppercase;
-  color: var(--color-text);
+  /* Matches .results__title (THE MAIN EVENT) rather than the 60px intro
+     display: 46px/40px is the size this flow actually uses for a three-line
+     stacked headline, and it's comfortably under the 343px gutter the 16px
+     page padding leaves (READY measures ~281px here). */
+  font-size: 46px;
+  line-height: 40px;
+  /* On top of .ob-success__text's own 8px gap, so the gap under the title is
+     16px while the two body lines stay 8px apart. */
+  margin-bottom: 8px;
 }
 
 .ob-success__body {
   font-size: 16px;
   color: var(--color-text-muted);
   max-width: 329px;
+}
+
+/* The break is made in Success.jsx, not left to the wrap — see the note there.
+   The max-width above still applies as a backstop if a line ever outgrows it. */
+.ob-success__line {
+  display: block;
 }
