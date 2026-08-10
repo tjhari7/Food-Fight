@@ -1,0 +1,60 @@
+/* Long-form reading, so this page breaks from the app's card-and-control
+   rhythm: no fills, no borders, just a measure and vertical spacing. */
+
+.legal__title {
+  font-family: 'Gliker Semi Bold', var(--font-sans);
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+/* The one line a reader has to leave with if they read nothing else. Set in the
+   body colour rather than red: on a page whose whole job is to be sober and
+   factual, an alarm colour overstates it — this is a status, not a warning. The
+   weight and the full-strength text colour carry the emphasis instead, against
+   the muted grey everything below it uses. */
+.legal__status {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 28px;
+}
+
+.legal__section {
+  margin-bottom: 28px;
+}
+
+/* DM Sans Bold, not the Gliker cut the rest of the app's headings use. Gliker
+   is a display face — it earns its place on a title, but repeated down a page
+   of running prose it competes with the body copy it's meant to organise.
+   These headings are wayfinding, so they read as the body text's own bold. The
+   page title above keeps Gliker; it's the only display moment here. */
+.legal__heading {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+/* 1.6 rather than the app's usual tighter leading — these are multi-line
+   paragraphs rather than the one- and two-line strings the rest of the UI sets,
+   and they need the extra room to stay readable at this width. */
+.legal__body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.legal__body + .legal__body {
+  margin-top: 12px;
+}
+
+/* The last section's own margin was previously absorbed by the "last updated"
+   rule that closed the page. With that gone the final paragraph would end flush
+   against the frame, so the trailing space is held here instead. */
+.legal__section:last-of-type {
+  margin-bottom: 40px;
+}

@@ -8,6 +8,7 @@ import Settings from './pages/Settings.jsx'
 import FindMealResults from './pages/FindMealResults.jsx'
 import MealDetail from './pages/MealDetail.jsx'
 import Onboarding from './pages/Onboarding.jsx'
+import Legal from './pages/Legal.jsx'
 
 // A data router rather than <BrowserRouter>, because view transitions need one:
 // <BrowserRouter> pushes its location update through React.startTransition, so a
@@ -29,6 +30,11 @@ export const router = createBrowserRouter([
       // Two onboarding variants under test — /onboarding/a (10 screens) and
       // /onboarding/b (6). Neither writes to Supabase; see onboarding/flows.js.
       { path: '/onboarding/:variant', element: <Onboarding /> },
+      // Linked from the paywall, which App Store guideline 3.1.2 requires. Both
+      // are honest placeholders rather than drafted documents — see Legal.jsx
+      // for why, and for what has to happen before launch.
+      { path: '/terms', element: <Legal doc="terms" /> },
+      { path: '/privacy', element: <Legal doc="privacy" /> },
     ],
   },
 ])
