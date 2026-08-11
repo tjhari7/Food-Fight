@@ -6,6 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#FAF6E8" />
     <title>Food Fight</title>
+    <!-- The homepage hero, and the first thing onboarding shows. It is the LCP
+         element on both, and without this it is close to the last thing
+         requested: the <img> only enters the DOM once the bundle has downloaded,
+         parsed and mounted React, so the fetch could not even start until all of
+         that had finished. Declared here it is found by the preload scanner
+         during head parse and downloads alongside the bundle instead of after
+         it.
+
+         The href is the source path on purpose — Vite rewrites link[href] to the
+         hashed build filename, so this must not be hardcoded to a hashed name.
+         Verify it still points at a real asset after any change to how the hero
+         is imported; a stale path here fails silently as a console warning and a
+         hero that loads late again.
+
+         No crossorigin: the <img> that consumes this has none either, and the
+         two have to match or the preload is discarded and the image downloads
+         twice. -->
+    <link
+      rel="preload"
+      href="/src/assets/Pizza_VS_Taco_Fight_Hero.webp"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
