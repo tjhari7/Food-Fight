@@ -15,7 +15,7 @@ import ConfirmDialog from '../components/ConfirmDialog'
 import Toast from '../components/Toast'
 import leftSquiggle from '../assets/Left_Bolt.svg'
 import rightSquiggle from '../assets/Right_Bolt.svg'
-import fistImage from '../assets/Main_Event_Fist_Fight_01.png'
+import fistImage from '../assets/Main_Event_Fist_Fight_01.webp'
 import refreshIcon from '../assets/Icon_Refresh_Round.svg'
 import './FindMealResults.css'
 

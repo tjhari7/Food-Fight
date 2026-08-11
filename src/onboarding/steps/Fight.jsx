@@ -1,5 +1,5 @@
 import Button from '../../components/Button'
-import heroImage from '../../assets/Pizza_VS_Taco_Fight_Hero.png'
+import heroImage from '../../assets/Pizza_VS_Taco_Fight_Hero.webp'
 import curveShape from '../../assets/Curve_Shape.svg'
 
 // One screen carrying the whole pitch. The problem ("can't decide") and the

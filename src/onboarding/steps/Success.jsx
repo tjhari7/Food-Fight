@@ -1,7 +1,7 @@
 import Button from '../../components/Button'
 import curveShape from '../../assets/Curve_Shape.svg'
-import pancakePunch from '../../assets/Pancake_Success.png'
-import hotdogBlock from '../../assets/HotDog_Success.png'
+import pancakePunch from '../../assets/Pancake_Success.webp'
+import hotdogBlock from '../../assets/HotDog_Success.webp'
 import { useIris } from '../../components/IrisTransition.jsx'
 import { useOnboarding } from '../OnboardingContext.jsx'
 

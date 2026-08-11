@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Button from '../../components/Button'
 import curveShape from '../../assets/Curve_Shape.svg'
-import groupFight from '../../assets/Food_Fight_BurgerSandwich_01.png'
+import groupFight from '../../assets/Food_Fight_BurgerSandwich_01.webp'
 import { STARTER_PREVIEW_LIST, buildStarterMeals } from '../starterMeals'
 
 // This screen shows a capped taste of the roster rather than the true count —

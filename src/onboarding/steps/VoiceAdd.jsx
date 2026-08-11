@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Button from '../../components/Button'
 import Icon from '../../components/Icon'
 import { useOnboarding } from '../OnboardingContext.jsx'
-import frontPizza from '../../assets/Front_Pizza_transparent.png'
+import frontPizza from '../../assets/Front_Pizza_transparent.webp'
 import bubbleTail from '../../assets/Bubble_Tail.svg'
 import curveShape from '../../assets/Curve_Shape.svg'
 

@@ -9,7 +9,7 @@ import IconButton from '../components/IconButton'
 import Icon from '../components/Icon'
 import { UNASSIGNED_NAME } from '../api/categories'
 import { parseIngredientTranscript } from '../lib/ingredientMatch'
-import heroImage from '../assets/Pizza_VS_Taco_Fight_Hero.png'
+import heroImage from '../assets/Pizza_VS_Taco_Fight_Hero.webp'
 import './Home.css'
 
 const SpeechRecognitionClass =
