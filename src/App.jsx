@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import { IrisProvider } from './components/IrisTransition.jsx'
 import BootReveal from './components/BootReveal.jsx'
+import { warmMainAppAssets } from './lib/prefetch.js'
 
 // Layout route: the chrome that outlives any single page. Pages render through
 // the Outlet — see router.jsx for the table.
@@ -18,6 +20,17 @@ import BootReveal from './components/BootReveal.jsx'
 // FAB and A–Z index) still resolves to the frame and stays locked while the list
 // scrolls underneath.
 function App() {
+  // Every network asset the rest of the main app needs, warmed once per session
+  // after this first screen has finished loading. App is the right home for it
+  // rather than Home: it survives navigation, so this fires once instead of on
+  // every route change, and it still runs for someone who deep-links straight
+  // to /meals. Guarded internally against running twice, against slow and
+  // metered connections, and against competing with the current paint — see
+  // lib/prefetch.js.
+  useEffect(() => {
+    warmMainAppAssets()
+  }, [])
+
   return (
     <div className="device-frame">
       <div className="device-frame__scroll">

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams, Navigate } from 'react-router-dom'
 import { OnboardingProvider, useOnboarding } from '../onboarding/OnboardingContext.jsx'
-import { getFlow } from '../onboarding/flows.js'
+import { getFlow, stepAssets } from '../onboarding/flows.js'
+import { prefetchAssets, whenIdle } from '../lib/prefetch'
 import IconButton from '../components/IconButton'
 import Icon from '../components/Icon'
 import { getPageScroller, scrollPageTo } from '../lib/pageScroll'
@@ -32,6 +33,22 @@ function OnboardingRunner({ flow }) {
 
   const step = flow.steps[index]
   const isLast = index === flow.steps.length - 1
+
+  // Fetch the next screen's art while the user is still reading this one. The
+  // flow is a linear array with an index, so "one step ahead" is just index+1 —
+  // there is nothing to predict. This is the whole reason onboarding felt worse
+  // than the rest of the app: only one step is mounted at a time, so before
+  // this each screen's art started downloading at the moment it appeared, with
+  // nothing overlapping the seconds the user spends reading.
+  //
+  // Idle-scheduled so it never competes with the step that is on screen now.
+  // requestIdleCallback's timeout still fires it within ~2s, comfortably inside
+  // the time anyone spends on a screen before tapping through.
+  useEffect(() => {
+    const next = flow.steps[index + 1]
+    if (!next) return
+    whenIdle(() => prefetchAssets(stepAssets(next)))
+  }, [flow, index])
 
   // The back-to-top control only makes sense once the back chevron itself has
   // scrolled out of view — watching the viewport (root: null) rather than

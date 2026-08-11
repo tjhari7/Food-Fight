@@ -9,6 +9,40 @@ import Account from './steps/Account.jsx'
 import Paywall from './steps/Paywall.jsx'
 import Success from './steps/Success.jsx'
 
+import heroImage from '../assets/Pizza_VS_Taco_Fight_Hero.webp'
+import fistImage from '../assets/Main_Event_Fist_Fight_01.webp'
+import leftBolt from '../assets/Left_Bolt.svg'
+import rightBolt from '../assets/Right_Bolt.svg'
+import impactWinner from '../assets/Impact_All_Meals_2.svg'
+import groupFight from '../assets/Food_Fight_BurgerSandwich_01.webp'
+import frontPizza from '../assets/Front_Pizza_transparent.webp'
+import hotdogSuccess from '../assets/HotDog_Success.webp'
+import pancakeSuccess from '../assets/Pancake_Success.webp'
+
+// What each step costs over the network, so the runner can fetch the next one
+// while the user is still reading the current one. Keyed by step key rather
+// than declared on the step objects because both variants reuse the same keys
+// for the same screens — one map means A and B can never disagree about what a
+// screen needs.
+//
+// Only assets Vite emits appear here. Steps absent from the map genuinely need
+// nothing: manual, roster, account and paywall render Curve_Shape and the
+// social marks, all of which are under the 4KB inline limit and already sit in
+// the bundle. See lib/prefetch.js.
+const STEP_ASSETS = {
+  fight: [heroImage],
+  'main-event': [fistImage, leftBolt, rightBolt],
+  champion: [impactWinner],
+  prebuilt: [groupFight],
+  voice: [frontPizza],
+  success: [hotdogSuccess, pancakeSuccess],
+}
+
+/** Network assets `step` will render, or [] for the screens that need none. */
+export function stepAssets(step) {
+  return (step && STEP_ASSETS[step.key]) || []
+}
+
 // The two variants are the same screens in a different order — they share one
 // set of step components, so a change to any shared screen lands in both. The
 // structural argument between them is now only sequence, not content:
