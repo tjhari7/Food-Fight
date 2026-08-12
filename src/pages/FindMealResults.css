@@ -14,8 +14,11 @@
      is out of flow (see .results-page .page-header below). It does NOT move
      that button: an absolutely-positioned box resolves its offsets against the
      containing block's padding box, so `top: 16px` stays 16px from the page's
-     top edge no matter what this value is. */
-  padding-top: 48px;
+     top edge no matter what this value is. Matched to that 16px on purpose:
+     the header's buttons are centred in a 36px row that starts at its top
+     edge, so the same value lands the top of the hero art level with the top
+     of the back and group buttons. */
+  padding-top: 16px;
   /* Containing block for the out-of-flow back button. Deliberately `relative`
      and not a transform: a transform here would also capture any `position:
      fixed` descendant, which is the trap the .page.swipe-leaving comment in
