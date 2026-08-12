@@ -59,16 +59,25 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add,check_circle,chevron_left,chevron_right,close,content_copy,delete,edit,expand_less,group_add,ios_share,mic,more_vert,pause,search,tune,visibility,visibility_off"
       rel="stylesheet"
     />
+    <!-- Every Gliker face the app renders, preloaded together so no heading
+         can swap in late. A woff2 is only requested once CSS matches a rule
+         that names it, which on a hashed stylesheet is several hundred KB into
+         the critical path; declared here they are found by the preload scanner
+         during head parse and download alongside the bundle instead of behind
+         it. `crossorigin` is required even same-origin — fonts are fetched in
+         CORS mode, and without it the preload is discarded and the font
+         downloads a second time.
+         These are the five faces with rules pointing at them. public/fonts
+         holds four more (Bold, RegularCondensed, RegularSemiCondensed,
+         BoldSemiCondensed) that have @font-face blocks in index.css and no
+         rule anywhere using them — preloading those would pull 118KB nothing
+         renders and trip the browser's "preloaded but not used" warning.
+         Anything that starts using one belongs on this list. -->
     <link rel="preload" href="/fonts/Gliker-BlackExtraExpanded.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Gliker-Black.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Gliker-BlackSemiExpanded.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Gliker-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
-    <!-- Gliker-Regular is NOT preloaded. A preload downloads unconditionally on
-         every entry, and this face is used by one rule in the whole app
-         (.detail__section-title, MealDetail.css) — so preloading it spent 29KB
-         of the critical path on Home and on every onboarding screen for
-         something they never render. It still loads normally on meal detail,
-         one request later, which is the right trade for a screen you reach by
-         tapping rather than by landing. -->
+    <link rel="preload" href="/fonts/Gliker-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <style>
       /* Inline so red is painted before the bundle parses; index.css arrives
          with the bundle, so --color-accent is not available yet and the value
