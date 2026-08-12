@@ -9,7 +9,7 @@ export default function Fight({ onNext }) {
   return (
     <div className="ob-step">
       <div className="ob-intro">
-        <img src={heroImage} alt="" className="ob-intro__art" />
+        <img src={heroImage} width={1080} height={800} alt="" className="ob-intro__art" />
         <h1 className="ob-step__display">
           Food
           <br />
@@ -27,7 +27,7 @@ export default function Fight({ onNext }) {
       </div>
 
       <div className="ob-step__actions ob-step__actions--shelf ob-step__actions--shelf-low">
-        <img src={curveShape} alt="" aria-hidden="true" className="ob-step__curve" />
+        <img src={curveShape} width={375} height={32} alt="" aria-hidden="true" className="ob-step__curve" />
         <Button variant="primary" className="btn--full ob-step__cta" onClick={onNext}>
           <span>Get Started</span>
         </Button>

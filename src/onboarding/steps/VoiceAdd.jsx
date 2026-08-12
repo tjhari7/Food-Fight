@@ -226,8 +226,12 @@ export default function VoiceAdd({ onNext, onSkip }) {
           {spokenMeals.length === 0 && (
             <div className="ob-voice__mascot">
               <p className="ob-voice__bubble">You better add pizza!</p>
+              {/* No width/height on the tail, deliberately: Bubble_Tail.svg is
+                  23 x 15.2606, and the HTML attributes parse as integers — 15
+                  would encode a ratio the file does not have. .ob-voice__bubble-tail
+                  pins both axes in CSS anyway, so there is nothing to reserve. */}
               <img src={bubbleTail} alt="" aria-hidden="true" className="ob-voice__bubble-tail" />
-              <img src={frontPizza} alt="" className="ob-voice__pizza" />
+              <img src={frontPizza} width={1024} height={1024} alt="" className="ob-voice__pizza" />
             </div>
           )}
 
@@ -269,7 +273,7 @@ export default function VoiceAdd({ onNext, onSkip }) {
         ref={actionsRef}
         className="ob-step__actions ob-step__actions--shelf ob-step__actions--shelf-low"
       >
-        <img ref={curveRef} src={curveShape} alt="" aria-hidden="true" className="ob-step__curve" />
+        <img ref={curveRef} src={curveShape} width={375} height={32} alt="" aria-hidden="true" className="ob-step__curve" />
 
         <Button
           variant="primary"

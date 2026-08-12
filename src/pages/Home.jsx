@@ -131,7 +131,16 @@ export default function Home() {
       {...rootProps}
     >
       <div className="home__hero">
-        <img src={heroImage} alt="" className="home__hero-image" />
+        {/* width/height are here to reserve the box, not to size the image —
+            .home__hero-image pins width to 320px and leaves height auto, so
+            without them this reserves 0px and the title below it drops ~237px
+            the moment the art lands. The browser turns the pair into an
+            aspect-ratio and gets the box right on the first frame.
+            Only the RATIO has to stay true to the file: re-exporting the hero
+            at 2160x1600 for retina needs no change here. Re-cropping it does,
+            and fails silently by stretching the art — `npm run check:images`
+            is what catches that. */}
+        <img src={heroImage} width={1080} height={800} alt="" className="home__hero-image" />
         <h1 className="home__title">
           Food
           <br />

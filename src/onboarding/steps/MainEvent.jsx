@@ -147,7 +147,7 @@ export default function MainEvent({ onNext, flow }) {
     <div className="ob-step ob-step--flush">
       <div className="ob-fight__body">
         <div className="results__stage">
-          <img src={fistImage} alt="" className="results__hero-image" />
+          <img src={fistImage} width={640} height={461} alt="" className="results__hero-image" />
           <h1 className={`results__title ${swipeClass}`.trim()} onAnimationEnd={handleSwipeEnd}>
             {headline.lines.map((line, i) => (
               <span key={i}>
@@ -162,9 +162,9 @@ export default function MainEvent({ onNext, flow }) {
               <Fragment key={meal.id}>
                 {index === 1 && (
                   <div className="results__vs">
-                    <img src={leftSquiggle} alt="" className="results__vs-squiggle" />
+                    <img src={leftSquiggle} width={110} height={20} alt="" className="results__vs-squiggle" />
                     <span>VS</span>
-                    <img src={rightSquiggle} alt="" className="results__vs-squiggle" />
+                    <img src={rightSquiggle} width={110} height={20} alt="" className="results__vs-squiggle" />
                   </div>
                 )}
                 <ResultMealCard
@@ -182,14 +182,14 @@ export default function MainEvent({ onNext, flow }) {
       {/* Both affordances live on the shelf: the caption names the choice, and
           the button underneath is the way out of it. */}
       <div className="ob-step__actions ob-step__actions--shelf">
-        <img src={curveShape} alt="" aria-hidden="true" className="ob-step__curve" />
+        <img src={curveShape} width={375} height={32} alt="" aria-hidden="true" className="ob-step__curve" />
         <p className="ob-step__caption">
           Choose your champion.
           <br />
           Not feeling either? Try a new round.
         </p>
         <Button variant="secondary" className="btn--full results__reroll" onClick={handleReroll}>
-          <img src={refreshIcon} alt="" className="results__reroll-icon" />{' '}
+          <img src={refreshIcon} width={24} height={24} alt="" className="results__reroll-icon" />{' '}
           <span className="results__reroll-label">New Round</span>
         </Button>
       </div>

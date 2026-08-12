@@ -349,7 +349,12 @@ export default function FindMealResults() {
 
       <div className="results-page__body">
         <div className="results__stage">
-          <img src={fistImage} alt="" className="results__hero-image" />
+          {/* Reserves the box before the art arrives. This is the worst shift in
+              the app without it: .results__hero-image is width:100%/height:auto,
+              so the title and the whole card grid below start 0px up the page
+              and drop ~247px on a 375 screen when the fist lands.
+              Ratio, not resolution, is the contract — see the note in Home.jsx. */}
+          <img src={fistImage} width={640} height={461} alt="" className="results__hero-image" />
           <h1 className={`results__title ${swipeClass}`.trim()} onAnimationEnd={handleSwipeEnd}>
             {headline.lines.map((line, i) => (
               <span key={i}>
@@ -376,9 +381,13 @@ export default function FindMealResults() {
                 <Fragment key={meal.id}>
                   {index === 1 && (
                     <div className="results__vs">
-                      <img src={leftSquiggle} alt="" className="results__vs-squiggle" />
+                      {/* These two are the one pair whose shift is horizontal:
+                          the rule is height:20px/width:auto, so unreserved they
+                          are 0px wide and the centred VS row snaps sideways when
+                          they load. */}
+                      <img src={leftSquiggle} width={110} height={20} alt="" className="results__vs-squiggle" />
                       <span>VS</span>
-                      <img src={rightSquiggle} alt="" className="results__vs-squiggle" />
+                      <img src={rightSquiggle} width={110} height={20} alt="" className="results__vs-squiggle" />
                     </div>
                   )}
                   <ResultMealCard
@@ -416,7 +425,7 @@ export default function FindMealResults() {
             </>
           ) : (
             <Button variant="secondary" className="btn--full results__reroll" onClick={handleReroll}>
-              <img src={refreshIcon} alt="" className="results__reroll-icon" /> <span className="results__reroll-label">New Round</span>
+              <img src={refreshIcon} width={24} height={24} alt="" className="results__reroll-icon" /> <span className="results__reroll-label">New Round</span>
             </Button>
           )
         )}

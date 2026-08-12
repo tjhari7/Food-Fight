@@ -444,7 +444,7 @@ export default function AllMeals() {
           <br />
           Meals
         </h1>
-        <img src={impactAllMeals} alt="" className="all-meals__impact" />
+        <img src={impactAllMeals} width={54} height={56} alt="" className="all-meals__impact" />
 
         <div className="all-meals__search-row">
           <div className="all-meals__search">
@@ -611,7 +611,7 @@ export default function AllMeals() {
         }}
         className={'all-meals__fab' + (fabCollapsed ? ' all-meals__fab--collapsed' : '')}
       >
-        <img src={addIcon} alt="" className="all-meals__fab-icon" />
+        <img src={addIcon} width={16} height={14} alt="" className="all-meals__fab-icon" />
         <span className="all-meals__fab-label">Add Meal</span>
       </Link>
 

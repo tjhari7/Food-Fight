@@ -237,7 +237,7 @@ export default function Paywall({ onNext }) {
       </div>
 
       <div className="ob-step__actions ob-step__actions--shelf ob-step__actions--shelf-low">
-        <img src={curveShape} alt="" aria-hidden="true" className="ob-step__curve" />
+        <img src={curveShape} width={375} height={32} alt="" aria-hidden="true" className="ob-step__curve" />
         <Button variant="primary" className="btn--full ob-step__cta" onClick={onNext}>
           {/* Kept to ~12 uppercase characters — see .ob-step__cta's note on the
               Semi Expanded cut deforming the pill if the label wraps. The price

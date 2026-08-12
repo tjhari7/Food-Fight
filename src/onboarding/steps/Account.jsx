@@ -10,6 +10,9 @@ import { useOnboarding } from '../OnboardingContext.jsx'
 // distorted, so they're rendered at their native 1:1 ratio and nothing here
 // tints them — leave the fills alone if this button ever gets a dark variant
 // (Apple's mark inverts to white via a *different* supplied asset, not CSS).
+// Both logos are 24x24, which is what lets the <img> below hardcode its
+// width/height. A provider whose art is a different shape needs its own
+// dimensions on the record rather than the literals down there.
 const PROVIDERS = [
   { id: 'google', label: 'Continue with Google', logo: googleLogo },
   { id: 'apple', label: 'Continue with Apple', logo: appleLogo },
@@ -146,7 +149,7 @@ export default function Account({ onNext }) {
               {pending ? (
                 <span className="ob-social__spinner" aria-hidden="true" />
               ) : (
-                <img src={p.logo} alt="" aria-hidden="true" className="ob-social__logo" />
+                <img src={p.logo} width={24} height={24} alt="" aria-hidden="true" className="ob-social__logo" />
               )}
               <span>{pending ? 'Signing in…' : p.label}</span>
             </button>
@@ -155,7 +158,7 @@ export default function Account({ onNext }) {
       </div>
 
       <div className="ob-step__actions ob-step__actions--shelf ob-step__actions--shelf-low">
-        <img src={curveShape} alt="" aria-hidden="true" className="ob-step__curve" />
+        <img src={curveShape} width={375} height={32} alt="" aria-hidden="true" className="ob-step__curve" />
         <Button
           variant="primary"
           className={

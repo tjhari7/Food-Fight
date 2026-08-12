@@ -29,7 +29,7 @@ export default function Success() {
   return (
     <div className="ob-step">
       <div className="ob-success">
-        <img src={pancakePunch} alt="" aria-hidden="true" className="ob-success__art" />
+        <img src={pancakePunch} width={1024} height={750} alt="" aria-hidden="true" className="ob-success__art" />
 
         <div className="ob-success__text">
           {/* Same title-card treatment as FOOD FIGHT on the opening frame, so
@@ -54,11 +54,11 @@ export default function Success() {
         {/* No CSS mirror on this one: the replacement art is already drawn
             facing back toward the pancake, so flipping it would turn it away
             again. */}
-        <img src={hotdogBlock} alt="" aria-hidden="true" className="ob-success__art" />
+        <img src={hotdogBlock} width={1024} height={750} alt="" aria-hidden="true" className="ob-success__art" />
       </div>
 
       <div className="ob-step__actions ob-step__actions--shelf ob-step__actions--shelf-low">
-        <img src={curveShape} alt="" aria-hidden="true" className="ob-step__curve" />
+        <img src={curveShape} width={375} height={32} alt="" aria-hidden="true" className="ob-step__curve" />
         <Button variant="primary" className="btn--full ob-step__cta" onClick={handleEnter}>
           <span>Enter The Ring</span>
         </Button>

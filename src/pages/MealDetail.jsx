@@ -146,6 +146,8 @@ export default function MealDetail() {
         <>
           <img
             src={impactWinner}
+            width={120}
+            height={66}
             alt=""
             aria-hidden="true"
             className="detail__winner-impact"
@@ -168,7 +170,7 @@ export default function MealDetail() {
         style={morphing ? { viewTransitionName: MEAL_MORPH_NAME } : undefined}
       >
         {winnerHeadline && (
-          <img src={curveShape} alt="" aria-hidden="true" className="detail__winner-curve" />
+          <img src={curveShape} width={375} height={32} alt="" aria-hidden="true" className="detail__winner-curve" />
         )}
         <p className="eyebrow">{category?.name || 'Unassigned'}</p>
         <h1 className="detail__title">{meal.title}</h1>
@@ -241,7 +243,7 @@ export default function MealDetail() {
             to crown instead. */}
         {winnerHeadline && fromMainEvent && returnTo && (
           <Button variant="secondary" className="btn--full detail__rematch" onClick={startBack}>
-            <img src={refreshIcon} alt="" className="detail__rematch-icon" />
+            <img src={refreshIcon} width={24} height={24} alt="" className="detail__rematch-icon" />
             <span className="detail__rematch-label">Rematch</span>
           </Button>
         )}

@@ -27,7 +27,7 @@ export default function Champion({ onNext, onBack }) {
   return (
     <div className="ob-step ob-step--flush">
       <div className="ob-champion__head">
-        <img src={impactWinner} alt="" aria-hidden="true" className="detail__winner-impact" />
+        <img src={impactWinner} width={120} height={66} alt="" aria-hidden="true" className="detail__winner-impact" />
         <h1 className={`detail__winner-title ${headline.className}`}>
           {headline.lines
             ? headline.lines.map((line, i) => (
@@ -44,7 +44,7 @@ export default function Champion({ onNext, onBack }) {
           fight column — the frame runs its fill to both edges and insets the
           text 40pt. */}
       <Card className="detail__card detail__card--winner ob-champion__panel">
-        <img src={curveShape} alt="" aria-hidden="true" className="detail__winner-curve" />
+        <img src={curveShape} width={375} height={32} alt="" aria-hidden="true" className="detail__winner-curve" />
         <p className="eyebrow">{winner.category || 'Unassigned'}</p>
         <h2 className="detail__title">{winner.title}</h2>
 
@@ -116,7 +116,7 @@ export default function Champion({ onNext, onBack }) {
           below the fold instead of keeping them reachable at every scroll
           position. */}
       <div className="ob-step__actions ob-step__actions--shelf ob-step__actions--on-panel ob-step__actions--shelf-elevated">
-        <img src={curveShape} alt="" aria-hidden="true" className="ob-step__curve" />
+        <img src={curveShape} width={375} height={32} alt="" aria-hidden="true" className="ob-step__curve" />
         <div className="ob-step__curve-mask" aria-hidden="true" />
         <p className="ob-step__caption">And the winner dinner is...</p>
         <Button variant="primary" className="btn--full ob-step__cta" onClick={onNext}>
@@ -127,7 +127,7 @@ export default function Champion({ onNext, onBack }) {
             it hands back to. Deliberate deviation from the B frames — revert to
             `variant="text" className="ob-step__skip"` for the Figma original. */}
         <Button variant="secondary" className="btn--full ob-champion__rematch" onClick={onBack}>
-          <img src={refreshIcon} alt="" className="ob-champion__rematch-icon" />
+          <img src={refreshIcon} width={24} height={24} alt="" className="ob-champion__rematch-icon" />
           <span className="ob-champion__rematch-label">Rematch</span>
         </Button>
       </div>

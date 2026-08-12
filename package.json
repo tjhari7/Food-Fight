@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "check:images": "node scripts/check-image-dims.js",
     "backup": "node scripts/backup.js",
     "restore": "node scripts/restore.js"
   },

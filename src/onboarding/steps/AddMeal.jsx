@@ -129,7 +129,7 @@ export default function AddMeal({ onNext, onSkip }) {
       </div>
 
       <div className="ob-step__actions ob-step__actions--shelf">
-        <img src={curveShape} alt="" aria-hidden="true" className="ob-step__curve" />
+        <img src={curveShape} width={375} height={32} alt="" aria-hidden="true" className="ob-step__curve" />
         <Button
           variant="primary"
           className="btn--full ob-step__cta"

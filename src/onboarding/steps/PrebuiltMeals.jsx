@@ -86,7 +86,7 @@ export default function PrebuiltMeals({ onNext }) {
             same 8px flex gap under the peek/button while collapsed and gets
             carried to the bottom of the scrolled roster once that button is gone
             and the list becomes the scroll container. */}
-        <img src={groupFight} alt="" aria-hidden="true" className="ob-prebuilt__art" />
+        <img src={groupFight} width={1080} height={644} alt="" aria-hidden="true" className="ob-prebuilt__art" />
       </div>
 
       {/* The dome's shadow is the cue that content is passing under the shelf, so
@@ -95,7 +95,7 @@ export default function PrebuiltMeals({ onNext }) {
           isn't lifted off anything. Expanding the roster is what starts the scroll,
           and that's when the elevation turns on. */}
       <div className={`ob-step__actions ob-step__actions--shelf ob-step__actions--shelf-low${expanded ? ' ob-step__actions--shelf-elevated' : ''}`}>
-        <img src={curveShape} alt="" aria-hidden="true" className="ob-step__curve" />
+        <img src={curveShape} width={375} height={32} alt="" aria-hidden="true" className="ob-step__curve" />
         <div className="ob-step__curve-mask" aria-hidden="true" />
         <Button variant="primary" className="btn--full ob-step__cta" onClick={onNext}>
           <span>Continue</span>
