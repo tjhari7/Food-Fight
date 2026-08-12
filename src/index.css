@@ -73,14 +73,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Recoleta SemiBold';
-  src: url('./assets/Recoleta/Recoleta SemiBold.otf') format('opentype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   --color-bg: #FAF6E8;
   --color-card: #FFFCF5;
@@ -104,7 +96,11 @@
      own darker cut at 5.56:1. */
   --color-error-text: #C41818;
 
-  --font-serif: 'Instrument Serif', serif;
+  /* No serif token. Instrument Serif was loaded from Google Fonts for exactly
+     one heading (.ob-success__title), which only inherited it because that rule
+     forgot a font-family — its own comment says it means to match
+     .results__title, which is Gliker Black Extra Expanded. Every other heading
+     in the app names a Gliker face explicitly. */
   --font-sans: 'DM Sans', sans-serif;
 
   /* Optical centering nudge for the uppercase Gliker Black 24px labels on the
@@ -151,10 +147,14 @@ body {
   overflow-x: clip;
 }
 
+/* Base for any heading that doesn't name its own face. Was var(--font-serif),
+   which resolved to Instrument Serif; with that gone the honest default is the
+   body face rather than the browser's Times. Every heading class in the app
+   overrides this anyway — see the audit in the commit that removed the serif. */
 h1,
 h2,
 h3 {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-weight: 400;
   margin: 0;
 }

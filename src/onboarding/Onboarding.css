@@ -1836,6 +1836,11 @@
      display: 46px/40px is the size this flow actually uses for a three-line
      stacked headline, and it's comfortably under the 343px gutter the 16px
      page padding leaves (READY measures ~281px here). */
+  /* The face was missing here, so this was the only heading in the app falling
+     through to the h1/h2/h3 base rule — and the only thing anywhere pulling
+     Instrument Serif down from Google Fonts. Naming it makes this actually
+     match .results__title, which is what the note above always claimed. */
+  font-family: 'Gliker Black Extra Expanded', var(--font-sans);
   font-size: 46px;
   line-height: 40px;
   /* On top of .ob-success__text's own 8px gap, so the gap under the title is

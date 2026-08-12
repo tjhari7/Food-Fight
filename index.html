@@ -32,18 +32,43 @@
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Instrument Serif used to be requested here too. It was reaching exactly
+         one heading, and only because .ob-success__title forgot a font-family;
+         that rule now names Gliker like every other heading, so nothing is left
+         to render it. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,900&display=swap"
       rel="stylesheet"
     />
+    <!-- Subset to the icons actually rendered. Unqualified, this URL asks for
+         every axis at full range across all ~3,300 icons and Google returns
+         3.78MB — five times the weight of every image in the app combined, for
+         18 glyphs.
+         `icon_names` is what does the work (3.96MB -> 4KB). The axis tuple has
+         to stay in css2's required order (lowercase alphabetical, then
+         uppercase), and FILL MUST remain a 0..1 range rather than a pinned
+         value: IconButton, MealCard and GroupDrawer all set 'FILL' 1, and
+         IconButton.css transitions the axis, which a static instance cannot do.
+         opsz/wght/GRAD are pinned because 24/400/0 are the only values used.
+         Adding an icon anywhere means adding it to this list, or it renders as
+         its own ligature text — the literal word "search" — instead of a glyph.
+         Three of these (pause, visibility, visibility_off) are only reachable
+         through ternaries in VoiceAdd and Account, so grep for `name={` as well
+         as `name="` when auditing this. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add,check_circle,chevron_left,chevron_right,close,content_copy,delete,edit,expand_less,group_add,ios_share,mic,more_vert,pause,search,tune,visibility,visibility_off"
       rel="stylesheet"
     />
     <link rel="preload" href="/fonts/Gliker-BlackExtraExpanded.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Gliker-Black.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Gliker-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/Gliker-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Gliker-Regular is NOT preloaded. A preload downloads unconditionally on
+         every entry, and this face is used by one rule in the whole app
+         (.detail__section-title, MealDetail.css) — so preloading it spent 29KB
+         of the critical path on Home and on every onboarding screen for
+         something they never render. It still loads normally on meal detail,
+         one request later, which is the right trade for a screen you reach by
+         tapping rather than by landing. -->
     <style>
       /* Inline so red is painted before the bundle parses; index.css arrives
          with the bundle, so --color-accent is not available yet and the value
