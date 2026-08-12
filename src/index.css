@@ -508,8 +508,42 @@ a {
     min-height: 100%;
   }
 
+  /* `min-height`, not the `height: 100%` this used to be, so the page can grow
+     past the frame when its content doesn't fit. The base rule pins this page
+     to `height: 100dvh` (see FindMealResults.css) to anchor New Round; inside
+     the frame that fixed box meant tall content spilled out of it and the
+     page's own `padding-bottom` stayed behind at the 812px mark, so the button
+     ended flush against the end of the scroll with no cushion. */
   .device-frame .results-page {
-    height: 100%;
+    height: auto;
+    min-height: 100%;
+  }
+
+  /* Centre the Main Event's content in the frame when it fits, and let it fall
+     back to top-aligned + scrolling when it doesn't. The back and group buttons
+     are `position: absolute` on this page, so they stay pinned at the top edge
+     either way and only the content between them moves.
+
+     Auto margins rather than `justify-content: center` on the body, and the
+     difference matters: justify-content centres by overflowing BOTH ends, so on
+     a short window the top of the hero art would be pushed above the scroll
+     container's origin and become unreachable — you can't scroll up past
+     scrollTop 0. Auto margins only ever divide *positive* free space; the
+     moment content exceeds the frame they resolve to 0 and the block sits at
+     the top on its own, which is exactly the fallback we want. One pair of
+     rules covers both states with no second breakpoint and no JS.
+
+     Keyed to first/last child rather than named elements because the body's
+     tail changes by state: New Round normally, a fight note plus Fight Decision
+     with a group running, and neither one while loading or when no meal matches
+     the filters (in which case the stage is both first and last child, and
+     centres itself). */
+  .device-frame .results-page__body > :first-child {
+    margin-top: auto;
+  }
+
+  .device-frame .results-page__body > :last-child {
+    margin-bottom: auto;
   }
 
   /* These rules centre fixed chrome against a 640px column on wide viewports
