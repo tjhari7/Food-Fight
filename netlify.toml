@@ -33,6 +33,15 @@
   [headers.values]
     cache-control = "public, max-age=31536000, immutable"
 
+# Netlify has no built-in MIME mapping for .webmanifest, so without this it
+# serves as application/octet-stream. Browsers are inconsistent about honoring
+# an installability manifest served with the wrong content type, so this isn't
+# optional the way it might look.
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    content-type = "application/manifest+json"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
