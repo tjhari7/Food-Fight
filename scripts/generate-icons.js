@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Renders the home screen / PWA icon set into public/icons from the one source
-// of truth for the mark: src/assets/Favicon_Food_Fight.svg.
+// Renders the home screen / PWA icon set into public/icons, plus the browser
+// tab favicon at public/favicon.svg, from the one source of truth for the
+// mark: src/assets/Favicon_Food_Fight.svg.
 //
 // A script rather than four checked-in PNGs someone drew once. The mark, the
 // plate colour and the padding are all decisions with reasons, and this file is
@@ -20,6 +21,7 @@ import sharp from 'sharp'
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const SOURCE = join(ROOT, 'src/assets/Favicon_Food_Fight.svg')
 const OUT_DIR = join(ROOT, 'public/icons')
+const FAVICON_OUT = join(ROOT, 'public/favicon.svg')
 
 // The plate is --color-bg and the mark is --color-accent, so the icon, the iOS
 // launch screen (which iOS paints from the manifest's background_color) and the
@@ -59,11 +61,11 @@ function icon(size, inkPct) {
   const dx = (size - VIEWBOX * scale) / 2
   const dy = size / 2 - ((INK_TOP + INK_BOTTOM) / 2) * scale
 
-  return Buffer.from(
+  return (
     `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">` +
-      `<rect width="${size}" height="${size}" fill="${PLATE}"/>` +
-      `<g transform="translate(${dx} ${dy}) scale(${scale})"><path d="${path}" fill="${MARK}"/></g>` +
-      `</svg>`
+    `<rect width="${size}" height="${size}" fill="${PLATE}"/>` +
+    `<g transform="translate(${dx} ${dy}) scale(${scale})"><path d="${path}" fill="${MARK}"/></g>` +
+    `</svg>`
   )
 }
 
@@ -91,7 +93,7 @@ for (const { file, size, ink } of OUTPUTS) {
   // flatten() against the plate colour guarantees no alpha channel survives
   // even if the composed SVG somehow leaves one, which is the apple-touch-icon
   // requirement above.
-  const png = await sharp(icon(size, ink))
+  const png = await sharp(Buffer.from(icon(size, ink)))
     .flatten({ background: PLATE })
     .png({ compressionLevel: 9 })
     .toBuffer()
@@ -99,3 +101,13 @@ for (const { file, size, ink } of OUTPUTS) {
   writeFileSync(join(OUT_DIR, file), png)
   console.log(`${file.padEnd(24)} ${size}x${size}  ${(png.length / 1024).toFixed(1)}KB`)
 }
+
+// Browser-tab favicon. Vector, not rasterized: at 16-32px on screen an SVG
+// stays crisp where a PNG set would need its own multi-resolution set. Same
+// 62% ink scale and colours as the home-screen icons (confirmed against the
+// Figma "App Icon" spec, node 2115:15319 — Frame 71 sits at 62% width,
+// centred both axes) so the browser tab and the installed app read as the
+// same mark. Replaces the inline data-URI that used to live in index.html:
+// that copy carried #E62E2E, not --color-accent, and had no plate at all.
+writeFileSync(FAVICON_OUT, icon(32, 0.62))
+console.log(`favicon.svg               32x32`)

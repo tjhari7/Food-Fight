@@ -26,3 +26,8 @@ dist-ssr
 
 # Local Netlify folder
 .netlify
+
+# Netlify CLI's Deno lockfile for Edge Functions type-checking. This project
+# defines no edge functions; it's incidental `netlify dev` output that only
+# re-lists existing package.json deps, and it regenerates on its own.
+deno.lock
