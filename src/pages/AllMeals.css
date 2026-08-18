@@ -475,7 +475,9 @@
 .all-meals__fab {
   position: fixed;
   right: max(16px, calc((100vw - 640px) / 2 + 16px));
-  bottom: 16px;
+  /* Fixed to the viewport, so unlike the page's own padding this sits over the
+     home indicator in standalone unless it is lifted explicitly. */
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   display: inline-flex;
   align-items: center;
   justify-content: center;

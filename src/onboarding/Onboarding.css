@@ -15,7 +15,12 @@
   position: relative;
   max-width: 640px;
   margin: 0 auto;
-  padding: 16px 0 0;
+  /* Onboarding is its own root, not a `.page`, so it does not inherit that
+     rule's safe-area padding (see index.css) and needs its own. Bottom stays
+     at 0 for the reason .ob-step__actions--shelf gives — the shelf bleeds to
+     the bottom of the screen; the indicator clearance lives on
+     .ob-step__actions instead. */
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 0 0;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
@@ -260,7 +265,10 @@
   flex-direction: column;
   gap: 12px;
   padding-top: 24px;
-  padding-bottom: 16px;
+  /* The primary button is the last thing above the bottom of the screen, and
+     on the shelf variants the cream runs right off the edge — so this is the
+     only thing holding the CTA off the home indicator in standalone. */
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
 }
 
 /* The cream shelf the primary button sits on. It bleeds back out through

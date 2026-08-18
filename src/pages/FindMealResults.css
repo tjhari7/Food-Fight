@@ -6,7 +6,9 @@
      pushing the button up and down between rounds. */
   height: 100vh;
   height: 100dvh;
-  padding-bottom: 16px;
+  /* Lifts New Round clear of the home indicator in standalone; plain 16px in a
+     browser tab. See the .page comment in index.css. */
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   /* Clips content while it sits fully off-screen during the New Round swipe. */
   overflow-x: clip;
   /* Override the .page top padding on this page only. This is what sets the
@@ -17,8 +19,11 @@
      top edge no matter what this value is. Matched to that 16px on purpose:
      the header's buttons are centred in a 36px row that starts at its top
      edge, so the same value lands the top of the hero art level with the top
-     of the back and group buttons. */
-  padding-top: 16px;
+     of the back and group buttons. The safe-area term is carried by BOTH this
+     and the header's `top` below for that reason — they have to move down
+     together or the alignment this paragraph describes comes apart on a
+     notched phone in standalone. */
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
   /* Containing block for the out-of-flow back button. Deliberately `relative`
      and not a transform: a transform here would also capture any `position:
      fixed` descendant, which is the trap the .page.swipe-leaving comment in
@@ -37,7 +42,10 @@
    move from where it sat before. */
 .results-page .page-header {
   position: absolute;
-  top: 16px;
+  /* Absolute offsets resolve against the containing block's PADDING box, so
+     this does not inherit the safe-area term the page's padding-top just
+     gained — it has to be repeated here. Keep the two identical. */
+  top: calc(16px + env(safe-area-inset-top, 0px));
   left: 16px;
   right: 16px;
   margin-bottom: 0;

@@ -212,10 +212,25 @@ a {
   font-size: 0.75rem;
 }
 
+/* The 16px gutter every route sits in.
+ *
+ * Vertically that gutter is 16px PLUS whatever the device reserves for its own
+ * chrome. Installed to the home screen there is no browser toolbar standing
+ * between this page and the status bar or the home indicator — index.html asks
+ * for `black-translucent`, so the cream deliberately runs under both — and
+ * without these insets the first heading on every page sits behind the clock.
+ * In a browser tab, and on every desktop, the insets resolve to 0px and this is
+ * exactly the 16px it always was.
+ *
+ * Horizontal insets are left out on purpose. They only ever matter in landscape
+ * (that is where the notch takes a side), and a landscape phone is wider than
+ * the 601px breakpoint, so it gets the centred .device-frame instead of a
+ * full-bleed page. Nothing reaches the notch to need padding from it. */
 .page {
   max-width: 640px;
   margin: 0 auto;
-  padding: 16px;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px
+    calc(16px + env(safe-area-inset-bottom, 0px));
   min-height: 100vh;
   min-height: 100dvh;
 }

@@ -1,6 +1,8 @@
 .toast {
   position: fixed;
-  top: 16px;
+  /* Fixed to the viewport, which in standalone starts behind the clock — the
+     page's own safe-area padding does not reach this. */
+  top: calc(16px + env(safe-area-inset-top, 0px));
   left: 16px;
   right: 16px;
   /* Above the group drawer's scrim and sheet (both z-index 100), so a "Link
